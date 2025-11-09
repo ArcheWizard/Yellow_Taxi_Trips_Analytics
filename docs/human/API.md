@@ -14,7 +14,7 @@ http://localhost:8000
 
 ## Authentication
 
-*Currently, the API is unauthenticated. Authentication will be added in Phase 3.*
+_Currently, the API is unauthenticated. Authentication will be added in Phase 3._
 
 ## API Endpoints
 
@@ -87,8 +87,8 @@ curl "http://localhost:8000/api/v1/rides?limit=10&vendor_id=1"
       "pickup_location_id": 161,
       "dropoff_location_id": 234,
       "payment_type": 1,
-      "fare_amount": 12.50,
-      "total_amount": 15.80
+      "fare_amount": 12.5,
+      "total_amount": 15.8
     }
   ]
 }
@@ -123,15 +123,15 @@ curl "http://localhost:8000/api/v1/rides/12345"
   "rate_code_id": 1,
   "store_and_fwd_flag": "N",
   "payment_type": 1,
-  "fare_amount": 14.00,
-  "extra": 0.50,
-  "mta_tax": 0.50,
-  "tip_amount": 2.80,
-  "tolls_amount": 0.00,
-  "improvement_surcharge": 0.30,
-  "total_amount": 18.10,
-  "congestion_surcharge": 2.50,
-  "airport_fee": 0.00
+  "fare_amount": 14.0,
+  "extra": 0.5,
+  "mta_tax": 0.5,
+  "tip_amount": 2.8,
+  "tolls_amount": 0.0,
+  "improvement_surcharge": 0.3,
+  "total_amount": 18.1,
+  "congestion_surcharge": 2.5,
+  "airport_fee": 0.0
 }
 ```
 
@@ -157,8 +157,8 @@ curl "http://localhost:8000/api/v1/analytics/summary?date_from=2024-11-01&date_t
 ```json
 {
   "total_trips": 100000,
-  "total_revenue": 1850000.50,
-  "avg_fare": 18.50,
+  "total_revenue": 1850000.5,
+  "avg_fare": 18.5,
   "avg_distance": 3.2,
   "avg_duration_minutes": 15.5,
   "total_tips": 185000.25,
@@ -187,14 +187,14 @@ curl "http://localhost:8000/api/v1/analytics/hourly"
     {
       "hour": 0,
       "trip_count": 1500,
-      "avg_fare": 16.50,
-      "total_revenue": 24750.00
+      "avg_fare": 16.5,
+      "total_revenue": 24750.0
     },
     {
       "hour": 1,
       "trip_count": 1200,
-      "avg_fare": 17.20,
-      "total_revenue": 20640.00
+      "avg_fare": 17.2,
+      "total_revenue": 20640.0
     }
   ]
 }
@@ -222,7 +222,7 @@ curl "http://localhost:8000/api/v1/analytics/daily?days=7"
     {
       "date": "2024-11-01",
       "trip_count": 3500,
-      "revenue": 65000.00,
+      "revenue": 65000.0,
       "avg_fare": 18.57,
       "avg_distance": 3.1
     }
@@ -256,7 +256,7 @@ curl "http://localhost:8000/api/v1/analytics/top-locations?limit=10&type=pickup"
       "zone_name": "Midtown Center",
       "borough": "Manhattan",
       "trip_count": 5432,
-      "avg_fare": 19.80
+      "avg_fare": 19.8
     }
   ]
 }
@@ -275,17 +275,17 @@ Get revenue breakdown by payment type.
       "payment_type": 1,
       "payment_method": "Credit Card",
       "trip_count": 75000,
-      "total_revenue": 1425000.00,
-      "avg_fare": 19.00,
-      "avg_tip": 3.20
+      "total_revenue": 1425000.0,
+      "avg_fare": 19.0,
+      "avg_tip": 3.2
     },
     {
       "payment_type": 2,
       "payment_method": "Cash",
       "trip_count": 25000,
-      "total_revenue": 425000.50,
-      "avg_fare": 17.00,
-      "avg_tip": 0.00
+      "total_revenue": 425000.5,
+      "avg_fare": 17.0,
+      "avg_tip": 0.0
     }
   ]
 }
@@ -337,7 +337,7 @@ curl "http://localhost:8000/api/v1/vendors/1/metrics"
   "vendor_name": "Creative Mobile Technologies",
   "metrics": {
     "total_trips": 55000,
-    "total_revenue": 1050000.00,
+    "total_revenue": 1050000.0,
     "avg_fare": 19.09,
     "avg_distance": 3.3,
     "market_share": 55.0
@@ -466,7 +466,7 @@ http GET http://localhost:8000/api/v1/rides limit==10 vendor_id==1
 
 ## Rate Limiting
 
-*Rate limiting will be implemented in Phase 3.*
+_Rate limiting will be implemented in Phase 3._
 
 Planned limits:
 
@@ -475,7 +475,7 @@ Planned limits:
 
 ## Caching
 
-*Caching will be implemented in Phase 5.*
+_Caching will be implemented in Phase 5._
 
 Planned caching strategy:
 
@@ -484,7 +484,7 @@ Planned caching strategy:
 
 ## Webhooks
 
-*Webhooks not yet implemented.*
+_Webhooks not yet implemented._
 
 ---
 

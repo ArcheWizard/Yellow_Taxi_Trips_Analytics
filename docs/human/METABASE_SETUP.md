@@ -6,7 +6,7 @@ Metabase is now running and ready for dashboard creation!
 
 ## 🌐 Access Information
 
-**URL:** http://localhost:3000
+**URL:** <http://localhost:3000>
 
 **Container:** `metabase` (Docker)
 
@@ -14,11 +14,11 @@ Metabase is now running and ready for dashboard creation!
 
 ### 1. First-Time Setup (Required)
 
-Visit http://localhost:3000 and complete the setup wizard:
+Visit <http://localhost:3000> and complete the setup wizard:
 
 1. **Language Selection:** Choose your preferred language
 2. **Create Admin Account:**
-   - Email: your_email@example.com
+   - Email: <your_email@example.com>
    - Password: (choose a secure password)
    - First Name: Your Name
    - Last Name: Your Last Name
@@ -32,6 +32,7 @@ After completing initial setup:
 1. Click **Settings** (gear icon) → **Admin Settings** → **Databases** → **Add database**
 
 2. **Connection Details:**
+
    ```
    Database type: PostgreSQL
    Name: City Rides Analytics
@@ -61,7 +62,7 @@ After successful connection, you should see:
 
 ## 📊 Dashboard Creation Plan
 
-### Phase 4 Dashboards:
+### Phase 4 Dashboards
 
 1. **Overview Dashboard**
    - Total trips (KPI)
@@ -91,27 +92,32 @@ After successful connection, you should see:
 ## 🔄 Container Management
 
 ### Start Metabase
+
 ```bash
 docker start metabase
 ```
 
 ### Stop Metabase
+
 ```bash
 docker stop metabase
 ```
 
 ### View Logs
+
 ```bash
 docker logs metabase -f
 ```
 
 ### Remove Container (if needed)
+
 ```bash
 docker stop metabase
 docker rm metabase
 ```
 
 ### Restart from Scratch
+
 ```bash
 docker stop metabase
 docker rm metabase
@@ -140,13 +146,13 @@ docker run -d -p 3000:3000 \
 
 ## 📚 Resources
 
-- **Metabase Documentation:** https://www.metabase.com/docs/latest/
-- **Question Building:** https://www.metabase.com/docs/latest/questions/start
-- **Dashboard Guide:** https://www.metabase.com/docs/latest/dashboards/start
+- **Metabase Documentation:** <https://www.metabase.com/docs/latest/>
+- **Question Building:** <https://www.metabase.com/docs/latest/questions/start>
+- **Dashboard Guide:** <https://www.metabase.com/docs/latest/dashboards/start>
 
 ## ✅ Next Steps
 
-1. Complete initial setup at http://localhost:3000
+1. Complete initial setup at <http://localhost:3000>
 2. Add database connection (see connection details above)
 3. Create first question using materialized views
 4. Build Overview Dashboard

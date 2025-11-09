@@ -1,0 +1,56 @@
+name: Markdown Format & Lint
+
+on:
+  push:
+    paths:
+      - '**/*.md'
+  pull_request:
+    paths:
+      - '**/*.md'
+
+jobs:
+  markdown-fix:
+    name: Format & Lint Markdown (auto-fix)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install tools
+        run: |
+          # Install formatting and linting tools globally
+          npm install -g prettier markdownlint-cli2
+
+      - name: Format Markdown with Prettier
+        run: |
+          # Format all markdown files in the repository
+          prettier --write "**/*.md"
+
+      - name: Run markdownlint and auto-fix
+        run: |
+          # Attempt to fix auto-fixable markdownlint issues
+          markdownlint-cli2 "**/*.md" --fix || true
+
+      - name: Commit & push changes (if any)
+        env:
+          GIT_AUTHOR_NAME: github-actions[bot]
+          GIT_AUTHOR_EMAIL: github-actions[bot]@users.noreply.github.com
+        run: |
+          git config user.name "$GIT_AUTHOR_NAME"
+          git config user.email "$GIT_AUTHOR_EMAIL"
+          # Only commit if there are changes
+          if [ -n "$(git status --porcelain)" ]; then
+            git add .
+            git commit -m "chore(docs): auto-format Markdown with Prettier and markdownlint" || echo "No commit created"
+            # Push using the default token provided to actions/checkout
+            git push
+          else
+            echo "No Markdown formatting changes to commit"
+          fi

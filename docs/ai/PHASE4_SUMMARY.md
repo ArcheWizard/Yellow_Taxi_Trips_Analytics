@@ -5,7 +5,7 @@
 
 ## ✅ Prerequisites Complete
 
-- ✅ Metabase running on http://localhost:3000
+- ✅ Metabase running on <http://localhost:3000>
 - ✅ PostgreSQL connection successful
 - ✅ Database synced (3 tables + 8 materialized views)
 - ✅ 93,171 rides loaded
@@ -16,6 +16,7 @@
 ## 📊 Dashboard 1: Overview Dashboard
 
 ### Goal
+
 High-level KPIs and trends for quick insights
 
 ### Metrics to Display
@@ -23,11 +24,13 @@ High-level KPIs and trends for quick insights
 #### 1. **KPI Cards (Top Row)**
 
 **Total Trips**
+
 ```sql
 SELECT COUNT(*) as total_trips FROM rides;
 ```
 
 **Total Revenue**
+
 ```sql
 SELECT ROUND(SUM(total_amount)::numeric, 2) as total_revenue
 FROM rides
@@ -35,6 +38,7 @@ WHERE total_amount > 0;
 ```
 
 **Average Fare**
+
 ```sql
 SELECT ROUND(AVG(total_amount)::numeric, 2) as avg_fare
 FROM rides
@@ -42,6 +46,7 @@ WHERE total_amount > 0;
 ```
 
 **Average Distance**
+
 ```sql
 SELECT ROUND(AVG(trip_distance)::numeric, 2) as avg_distance
 FROM rides
@@ -49,6 +54,7 @@ WHERE trip_distance > 0;
 ```
 
 #### 2. **Daily Trend Chart**
+
 ```sql
 SELECT
     DATE(pickup_datetime) as date,
@@ -62,6 +68,7 @@ ORDER BY date;
 **Chart Type:** Line chart with dual Y-axis (trips and revenue)
 
 #### 3. **Top 5 Pickup Locations**
+
 ```sql
 SELECT
     zone,
@@ -75,6 +82,7 @@ LIMIT 5;
 **Chart Type:** Bar chart
 
 #### 4. **Revenue by Payment Type**
+
 ```sql
 SELECT
     CASE payment_type
@@ -92,6 +100,7 @@ ORDER BY revenue DESC;
 **Chart Type:** Pie chart
 
 ### Dashboard Layout
+
 ```
 ┌────────────┬────────────┬────────────┬────────────┐
 │ Total Trips│Total Revenue│  Avg Fare  │ Avg Dist   │
@@ -115,11 +124,13 @@ ORDER BY revenue DESC;
 ## 📊 Dashboard 2: Time Analysis Dashboard
 
 ### Goal
+
 Understand temporal patterns and peak hours
 
 ### Metrics to Display
 
 #### 1. **Hourly Heatmap**
+
 ```sql
 SELECT
     day_of_week,
@@ -133,6 +144,7 @@ ORDER BY day_of_week, hour;
 **Chart Type:** Heatmap with days on Y-axis, hours on X-axis
 
 #### 2. **Peak Hours Indicator**
+
 ```sql
 SELECT
     hour,
@@ -147,6 +159,7 @@ LIMIT 5;
 **Chart Type:** Bar chart
 
 #### 3. **Weekday vs Weekend**
+
 ```sql
 SELECT
     CASE
@@ -162,6 +175,7 @@ GROUP BY day_type;
 **Chart Type:** Comparison cards
 
 #### 4. **Hourly Revenue Trends**
+
 ```sql
 SELECT
     hour,
@@ -174,6 +188,7 @@ ORDER BY hour;
 **Chart Type:** Area chart
 
 ### Dashboard Layout
+
 ```
 ┌───────────────────────────────────────────────────┐
 │                                                   │
@@ -194,11 +209,13 @@ ORDER BY hour;
 ## 📊 Dashboard 3: Location Dashboard
 
 ### Goal
+
 Geographic insights and route analysis
 
 ### Metrics to Display
 
 #### 1. **Top Pickup Zones**
+
 ```sql
 SELECT
     zone,
@@ -213,6 +230,7 @@ LIMIT 10;
 **Chart Type:** Table with conditional formatting
 
 #### 2. **Top Dropoff Zones**
+
 ```sql
 SELECT
     zone,
@@ -227,6 +245,7 @@ LIMIT 10;
 **Chart Type:** Table
 
 #### 3. **Borough Comparison**
+
 ```sql
 SELECT
     borough,
@@ -243,6 +262,7 @@ ORDER BY trips DESC;
 **Chart Type:** Bar chart
 
 #### 4. **Popular Routes**
+
 ```sql
 SELECT
     pickup_zone || ' → ' || dropoff_zone as route,
@@ -256,6 +276,7 @@ LIMIT 10;
 **Chart Type:** Table
 
 ### Dashboard Layout
+
 ```
 ┌──────────────────────┬────────────────────────────┐
 │                      │                            │
@@ -278,11 +299,13 @@ LIMIT 10;
 ## 📊 Dashboard 4: Financial Dashboard
 
 ### Goal
+
 Revenue analysis and financial metrics
 
 ### Metrics to Display
 
 #### 1. **Revenue Breakdown**
+
 ```sql
 SELECT
     ROUND(SUM(fare_amount)::numeric, 2) as base_fare,
@@ -296,6 +319,7 @@ FROM rides;
 **Chart Type:** Stacked bar chart
 
 #### 2. **Payment Distribution**
+
 ```sql
 SELECT
     hour,
@@ -309,6 +333,7 @@ ORDER BY hour;
 **Chart Type:** Stacked area chart
 
 #### 3. **Distance-Based Pricing**
+
 ```sql
 SELECT
     segment,
@@ -328,6 +353,7 @@ END;
 **Chart Type:** Line chart
 
 #### 4. **Tip Analysis (Credit Card Only)**
+
 ```sql
 SELECT
     ROUND((tip_amount / NULLIF(fare_amount, 0) * 100)::numeric, 2) as tip_percentage,
@@ -346,7 +372,7 @@ ORDER BY tip_percentage;
 
 ### Step 1: Create First Dashboard (Overview)
 
-1. **Login to Metabase**: http://localhost:3000
+1. **Login to Metabase**: <http://localhost:3000>
 2. Click **"New"** → **"Dashboard"**
 3. Name: "🏠 Overview Dashboard"
 4. Description: "High-level KPIs and trends"
@@ -367,6 +393,7 @@ ORDER BY tip_percentage;
 ### Step 3: Add Charts
 
 For each chart:
+
 1. Click **"Add a question"**
 2. Write/paste SQL query
 3. Choose appropriate visualization type
@@ -406,6 +433,7 @@ cd ~/Coding/Big\ Data/MyProjects/Yellow_Taxi_Trips_Analytics
 ## ✅ Dashboard Checklist
 
 ### Overview Dashboard
+
 - [ ] Total trips KPI
 - [ ] Total revenue KPI
 - [ ] Average fare KPI
@@ -415,18 +443,21 @@ cd ~/Coding/Big\ Data/MyProjects/Yellow_Taxi_Trips_Analytics
 - [ ] Payment distribution
 
 ### Time Analysis Dashboard
+
 - [ ] Hourly heatmap
 - [ ] Peak hours chart
 - [ ] Weekday vs weekend comparison
 - [ ] Hourly revenue trends
 
 ### Location Dashboard
+
 - [ ] Top pickup zones table
 - [ ] Top dropoff zones table
 - [ ] Borough comparison chart
 - [ ] Popular routes table
 
 ### Financial Dashboard
+
 - [ ] Revenue breakdown
 - [ ] Payment distribution over time
 - [ ] Distance-based pricing
@@ -447,7 +478,8 @@ Once dashboards are built:
 ---
 
 **Need Help?**
-- Metabase Docs: https://www.metabase.com/docs/latest/
+
+- Metabase Docs: <https://www.metabase.com/docs/latest/>
 - SQL queries are in: `sql/queries/`
 - Materialized views: `sql/materialized_views.sql`
 

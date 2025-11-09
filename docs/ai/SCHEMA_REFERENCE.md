@@ -10,10 +10,10 @@ This is a concise, AI-optimized reference for the database schema. Use this when
 
 **Purpose:** Lookup table for taxi vendors/companies
 
-| Column      | Type         | Constraints | Description                    |
-|-------------|--------------|-------------|--------------------------------|
-| vendor_id   | INTEGER      | PK          | Unique vendor identifier       |
-| vendor_name | VARCHAR(100) | -           | Company name                   |
+| Column      | Type         | Constraints | Description              |
+| ----------- | ------------ | ----------- | ------------------------ |
+| vendor_id   | INTEGER      | PK          | Unique vendor identifier |
+| vendor_name | VARCHAR(100) | -           | Company name             |
 
 **Data:**
 
@@ -33,12 +33,12 @@ JOIN vendors v ON r.vendor_id = v.vendor_id
 
 **Purpose:** NYC taxi zone lookup table
 
-| Column         | Type        | Constraints | Description                  |
-|----------------|-------------|-------------|------------------------------|
-| location_id    | INTEGER     | PK          | Unique zone identifier       |
-| borough        | VARCHAR(50) | -           | NYC borough                  |
-| zone           | VARCHAR(100)| -           | Zone name                    |
-| service_zone   | VARCHAR(50) | -           | Service classification       |
+| Column       | Type         | Constraints | Description            |
+| ------------ | ------------ | ----------- | ---------------------- |
+| location_id  | INTEGER      | PK          | Unique zone identifier |
+| borough      | VARCHAR(50)  | -           | NYC borough            |
+| zone         | VARCHAR(100) | -           | Zone name              |
+| service_zone | VARCHAR(50)  | -           | Service classification |
 
 **Values:**
 
@@ -63,35 +63,35 @@ LEFT JOIN zones z_dropoff ON r.dropoff_location_id = z_dropoff.location_id
 
 #### Identity & References
 
-| Column      | Type    | Constraints | Description              |
-|-------------|---------|-------------|--------------------------|
-| ride_id     | BIGSERIAL | PK        | Auto-generated ID        |
-| vendor_id   | INTEGER | FK → vendors | Vendor reference       |
+| Column    | Type      | Constraints  | Description       |
+| --------- | --------- | ------------ | ----------------- |
+| ride_id   | BIGSERIAL | PK           | Auto-generated ID |
+| vendor_id | INTEGER   | FK → vendors | Vendor reference  |
 
 #### Timestamps
 
-| Column            | Type      | Constraints | Description                  |
-|-------------------|-----------|-------------|------------------------------|
-| pickup_datetime   | TIMESTAMP | NOT NULL    | When passenger picked up     |
-| dropoff_datetime  | TIMESTAMP | NOT NULL    | When passenger dropped off   |
-| created_at        | TIMESTAMP | DEFAULT NOW()| Record insertion time       |
+| Column           | Type      | Constraints   | Description                |
+| ---------------- | --------- | ------------- | -------------------------- |
+| pickup_datetime  | TIMESTAMP | NOT NULL      | When passenger picked up   |
+| dropoff_datetime | TIMESTAMP | NOT NULL      | When passenger dropped off |
+| created_at       | TIMESTAMP | DEFAULT NOW() | Record insertion time      |
 
 #### Trip Details
 
-| Column               | Type         | Constraints | Description                    |
-|---------------------|--------------|-------------|--------------------------------|
-| passenger_count     | INTEGER      | -           | Number of passengers (1-6)     |
-| trip_distance       | NUMERIC(8,2) | -           | Distance in miles              |
-| pickup_location_id  | INTEGER      | FK → zones  | Pickup zone                    |
-| dropoff_location_id | INTEGER      | FK → zones  | Dropoff zone                   |
+| Column              | Type         | Constraints | Description                |
+| ------------------- | ------------ | ----------- | -------------------------- |
+| passenger_count     | INTEGER      | -           | Number of passengers (1-6) |
+| trip_distance       | NUMERIC(8,2) | -           | Distance in miles          |
+| pickup_location_id  | INTEGER      | FK → zones  | Pickup zone                |
+| dropoff_location_id | INTEGER      | FK → zones  | Dropoff zone               |
 
 #### Rate & Payment
 
-| Column              | Type    | Constraints | Description                     |
-|---------------------|---------|-------------|---------------------------------|
-| rate_code_id        | INTEGER | -           | Rate type (1-6)                 |
-| store_and_fwd_flag  | CHAR(1) | -           | Y=stored, N=not stored          |
-| payment_type        | INTEGER | -           | Payment method (1-6)            |
+| Column             | Type    | Constraints | Description            |
+| ------------------ | ------- | ----------- | ---------------------- |
+| rate_code_id       | INTEGER | -           | Rate type (1-6)        |
+| store_and_fwd_flag | CHAR(1) | -           | Y=stored, N=not stored |
+| payment_type       | INTEGER | -           | Payment method (1-6)   |
 
 **rate_code_id Values:**
 
@@ -113,17 +113,17 @@ LEFT JOIN zones z_dropoff ON r.dropoff_location_id = z_dropoff.location_id
 
 #### Financial Fields
 
-| Column                  | Type         | Constraints | Description                    |
-|------------------------|--------------|-------------|--------------------------------|
-| fare_amount            | NUMERIC(8,2) | -           | Base fare                      |
-| extra                  | NUMERIC(8,2) | -           | Extra charges                  |
-| mta_tax                | NUMERIC(8,2) | -           | MTA tax ($0.50)                |
-| tip_amount             | NUMERIC(8,2) | -           | Tip (credit card only)         |
-| tolls_amount           | NUMERIC(8,2) | -           | Total tolls                    |
-| improvement_surcharge  | NUMERIC(8,2) | -           | Improvement ($0.30)            |
-| total_amount           | NUMERIC(8,2) | -           | Total charged                  |
-| congestion_surcharge   | NUMERIC(8,2) | -           | Congestion surcharge           |
-| airport_fee            | NUMERIC(8,2) | -           | Airport fee ($1.25 JFK/LGA)    |
+| Column                | Type         | Constraints | Description                 |
+| --------------------- | ------------ | ----------- | --------------------------- |
+| fare_amount           | NUMERIC(8,2) | -           | Base fare                   |
+| extra                 | NUMERIC(8,2) | -           | Extra charges               |
+| mta_tax               | NUMERIC(8,2) | -           | MTA tax ($0.50)             |
+| tip_amount            | NUMERIC(8,2) | -           | Tip (credit card only)      |
+| tolls_amount          | NUMERIC(8,2) | -           | Total tolls                 |
+| improvement_surcharge | NUMERIC(8,2) | -           | Improvement ($0.30)         |
+| total_amount          | NUMERIC(8,2) | -           | Total charged               |
+| congestion_surcharge  | NUMERIC(8,2) | -           | Congestion surcharge        |
+| airport_fee           | NUMERIC(8,2) | -           | Airport fee ($1.25 JFK/LGA) |
 
 **Important Notes:**
 

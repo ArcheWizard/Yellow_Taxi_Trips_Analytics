@@ -84,10 +84,10 @@ CREATE TABLE vendors (
 SELECT * FROM vendors;
 ```
 
-| vendor_id | vendor_name                   |
-|-----------|-------------------------------|
-| 1         | Creative Mobile Technologies  |
-| 2         | VeriFone Inc.                 |
+| vendor_id | vendor_name                  |
+| --------- | ---------------------------- |
+| 1         | Creative Mobile Technologies |
+| 2         | VeriFone Inc.                |
 
 ### 2. `zones` Table
 

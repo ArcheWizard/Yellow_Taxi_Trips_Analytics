@@ -172,7 +172,7 @@ Stored in `.env` file (never committed):
 2. **Aggregation:**
    - Use GROUP BY with indexed columns
    - Consider materialized views for recurring aggregations
-   - Avoid COUNT(*) on full table (use pg_stat_user_tables)
+   - Avoid COUNT(\*) on full table (use pg_stat_user_tables)
 
 3. **Joins:**
    - Vendor and zone joins are cheap (small lookup tables)
