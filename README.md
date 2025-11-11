@@ -11,12 +11,12 @@ This project analyzes NYC taxi trip patterns, vendor performance, and customer b
 - ✅ PostgreSQL database with optimized schema and 8 materialized views
 - ✅ Python ETL pipeline for data loading (93K+ rides loaded)
 - ✅ Advanced SQL analytics (window functions, CTEs, aggregations)
-- ✅ RESTful API with FastAPI (14 endpoints, automatic documentation)
-- ✅ Metabase dashboards for interactive visualization
+- ✅ RESTful API with FastAPI (13 endpoints, automatic documentation)
+- 🚧 Metabase ready for dashboard creation (Docker container running)
 
-**Status:** **PRODUCTION READY** 🚀
+**Status:** **Phase 3 Complete** - API Layer ✅
 
-All 4 phases completed successfully!
+Phases 1-3 completed successfully! Phase 4 (Visualization) ready to start.
 
 ## 📚 Documentation
 
@@ -90,6 +90,22 @@ Complete documentation is available in the `docs/` folder:
    python src/etl/load_data.py
    ```
 
+7. **Start the API server**
+
+   ```bash
+   cd src/api
+   python main.py
+   # API will be available at http://localhost:8000
+   # API docs at http://localhost:8000/docs
+   ```
+
+8. **(Optional) Start Metabase**
+
+   ```bash
+   docker start metabase
+   # Access at http://localhost:3000
+   ```
+
 ## 📁 Project Structure
 
 ```text
@@ -116,8 +132,9 @@ Yellow_Taxi_Trips_Analytics/
 
 - **Database:** PostgreSQL 14+
 - **ETL:** Python, pandas, pyarrow
-- **API:** FastAPI (planned)
-- **Visualization:** Metabase/Superset (planned)
+- **API:** FastAPI, Uvicorn
+- **Visualization:** Metabase (Docker) - ready for dashboard creation
+- **Development:** python-dotenv, SQLAlchemy, psycopg2
 
 ## 📊 Dataset
 
@@ -146,19 +163,53 @@ NYC Taxi & Limousine Commission (TLC) - Yellow Taxi Trip Records
 - [x] Materialized views (8 views, 712 KB)
 - [x] Performance monitoring queries
 
-**Phase 3: API Layer** (Next)
+**Phase 3: API Layer** ✅ **COMPLETED**
 
-- [ ] FastAPI application structure
-- [ ] Health and CRUD endpoints
-- [ ] Analytics API endpoints
-- [ ] API documentation
+- [x] FastAPI application structure
+- [x] Health and CRUD endpoints
+- [x] Analytics API endpoints (9 analytics endpoints)
+- [x] Automatic API documentation (Swagger/ReDoc)
+- [x] Database service layer with connection pooling
+- [x] Pydantic models for type-safe validation
 
-**Phase 4: Visualization** (Planned)
+**Phase 4: Visualization** 🚧 **IN PROGRESS**
 
-- [ ] Dashboard design
-- [ ] BI tool integration
+- [x] Metabase installation (Docker)
+- [x] PostgreSQL connection configured
+- [x] Schema synced (3 tables + 8 materialized views)
+- [ ] Dashboard creation (4 dashboards planned)
+- [ ] Interactive filters and drill-downs
 
 ## 📝 Usage Examples
+
+### Start the API Server
+
+```bash
+cd src/api
+python main.py
+```
+
+The API will be available at:
+
+- **Base URL:** <http://localhost:8000>
+- **Interactive Docs:** <http://localhost:8000/docs>
+- **ReDoc:** <http://localhost:8000/redoc>
+
+### API Examples
+
+```bash
+# Health check
+curl http://localhost:8000/health
+
+# Get rides with pagination
+curl "http://localhost:8000/api/v1/rides?page=1&page_size=10"
+
+# Get analytics summary
+curl http://localhost:8000/api/v1/analytics/summary
+
+# Get hourly statistics
+curl http://localhost:8000/api/v1/analytics/hourly
+```
 
 ### Load Data
 
@@ -169,10 +220,10 @@ python src/etl/load_data.py
 # Load full dataset (edit load_data.py to remove sample_size parameter)
 ```
 
-### Query Data
+### Query Data Directly
 
 ```bash
-psql -U rides_user -d city_rides_db
+psql -U rides_user -d city_rides_db -h localhost
 
 # Example queries
 SELECT COUNT(*) FROM rides;
@@ -180,6 +231,39 @@ SELECT vendor_name, COUNT(*) FROM rides r
 JOIN vendors v ON r.vendor_id = v.vendor_id
 GROUP BY vendor_name;
 ```
+
+### Refresh Materialized Views
+
+```bash
+# Refresh all materialized views for updated dashboard data
+./scripts/refresh_materialized_views.sh
+```
+
+## 🖼️ Screenshots
+
+### API Documentation
+
+The FastAPI application provides interactive API documentation with automatic request/response examples:
+
+![API Documentation - Main Interface](docs/screenshots/API-1.png)
+
+![API Documentation - Endpoints](docs/screenshots/API-2.png)
+
+### Analytics Examples
+
+List of available analytics endpoints:
+
+![Analytics Endpoints List](docs/screenshots/List_Of_Analytics.png)
+
+### Data Visualizations
+
+Distance segments analysis showing fare distribution by trip distance:
+
+![Distance Segments Bar Graph](docs/screenshots/Mv_Distance_Segments_Bar_Graph.png)
+
+Popular routes table showing the most frequent pickup-dropoff pairs:
+
+![Popular Routes Table](docs/screenshots/Mv_Popular_Routes_Table.png)
 
 ## 🤝 Contributing
 
@@ -191,6 +275,6 @@ For detailed information, check the documentation in `docs/human/`.
 
 ---
 
-**Last Updated:** November 2, 2025
-**Version:** 0.1.0
-**Status:** Active Development
+**Last Updated:** November 9, 2025
+**Version:** 1.0.0
+**Status:** Phase 3 Complete - API Layer Operational

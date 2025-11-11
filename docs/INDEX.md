@@ -2,6 +2,8 @@
 
 Welcome to the City Rides Analytics Dashboard documentation!
 
+**Project Status:** Phase 3 Complete (API Layer) | Phase 4 In Progress (Dashboards)
+
 ## 📚 For Human Collaborators
 
 Navigate to the `human/` folder for user-facing documentation:
@@ -16,7 +18,8 @@ Navigate to the `human/` folder for user-facing documentation:
 
 - **[DATABASE.md](human/DATABASE.md)** - Database schema, tables, indexes, and maintenance
 - **[ANALYTICS.md](human/ANALYTICS.md)** - SQL query examples and analytics patterns
-- **[API.md](human/API.md)** - REST API documentation and endpoints
+- **[API.md](human/API.md)** - REST API documentation and endpoints (13 endpoints)
+- **[METABASE_SETUP.md](human/METABASE_SETUP.md)** - Metabase installation and dashboard creation guide
 
 ## 🤖 For AI Assistants
 
@@ -27,6 +30,9 @@ Navigate to the `ai/` folder for AI-optimized context:
 - **[PROJECT_CONTEXT.md](ai/PROJECT_CONTEXT.md)** - Architecture, design decisions, and project structure
 - **[DEVELOPMENT_GUIDE.md](ai/DEVELOPMENT_GUIDE.md)** - Coding standards, patterns, and best practices
 - **[SCHEMA_REFERENCE.md](ai/SCHEMA_REFERENCE.md)** - Quick database schema reference with query patterns
+- **[PROGRESS.md](ai/PROGRESS.md)** - Detailed project progress and completion status
+- **[PHASE3_SUMMARY.md](ai/PHASE3_SUMMARY.md)** - FastAPI implementation summary
+- **[PHASE4_SUMMARY.md](ai/PHASE4_SUMMARY.md)** - Metabase dashboard specifications
 
 ## 🎯 Quick Navigation by Task
 
@@ -50,6 +56,10 @@ Navigate to the `ai/` folder for AI-optimized context:
 
 → Review [human/API.md](human/API.md)
 
+### "I want to create dashboards"
+
+→ See [human/METABASE_SETUP.md](human/METABASE_SETUP.md) and [ai/PHASE4_SUMMARY.md](ai/PHASE4_SUMMARY.md)
+
 ### "I'm an AI helping with this project"
 
 → Read all files in `ai/` folder first, then reference `human/` as needed
@@ -65,11 +75,16 @@ docs/
 │   ├── IMPLEMENTATION_GUIDE.md    # Step-by-step guide (25 steps)
 │   ├── DATABASE.md                # Database documentation
 │   ├── ANALYTICS.md               # Query examples
-│   └── API.md                     # API documentation
+│   ├── API.md                     # API documentation
+│   └── METABASE_SETUP.md          # Dashboard setup
 └── ai/                             # For AI assistants
     ├── PROJECT_CONTEXT.md         # Architecture & decisions
     ├── DEVELOPMENT_GUIDE.md       # Coding standards
-    └── SCHEMA_REFERENCE.md        # Quick schema reference
+    ├── SCHEMA_REFERENCE.md        # Quick schema reference
+    ├── PROGRESS.md                # Project progress tracking
+    ├── PHASE2_SUMMARY.md          # Analytics phase summary
+    ├── PHASE3_SUMMARY.md          # API phase summary
+    └── PHASE4_SUMMARY.md          # Dashboard phase summary
 ```
 
 ## 🔄 Keeping Documentation Updated
@@ -93,4 +108,5 @@ When making changes to the project:
 
 ---
 
-**Last Updated:** November 2, 2025
+**Last Updated:** November 9, 2025
+**Project Version:** 1.0.0

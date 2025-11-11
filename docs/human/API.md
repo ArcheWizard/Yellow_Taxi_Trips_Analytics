@@ -2,19 +2,32 @@
 
 ## 🚀 FastAPI Application
 
+**Status:** ✅ Operational
+**Base URL:** <http://localhost:8000>
+**Version:** 1.0.0
+
 ## Overview
 
 The City Rides Analytics API provides RESTful endpoints for accessing NYC taxi trip data and analytics. Built with FastAPI, it offers automatic API documentation, data validation, and high performance.
 
-## Base URL
+## Quick Start
 
-```text
-http://localhost:8000
+### Starting the API
+
+```bash
+cd src/api
+python main.py
 ```
+
+The API will start on `http://localhost:8000` with:
+
+- **Interactive Docs:** <http://localhost:8000/docs> (Swagger UI)
+- **Alternative Docs:** <http://localhost:8000/redoc> (ReDoc)
+- **OpenAPI Schema:** <http://localhost:8000/openapi.json>
 
 ## Authentication
 
-_Currently, the API is unauthenticated. Authentication will be added in Phase 3._
+Currently, the API is unauthenticated. Authentication will be added in future phases.
 
 ## API Endpoints
 
@@ -466,27 +479,24 @@ http GET http://localhost:8000/api/v1/rides limit==10 vendor_id==1
 
 ## Rate Limiting
 
-_Rate limiting will be implemented in Phase 3._
-
-Planned limits:
+Rate limiting is not currently implemented. Planned for future phases:
 
 - 100 requests per minute per IP
 - 1000 requests per hour per IP
 
 ## Caching
 
-_Caching will be implemented in Phase 5._
-
-Planned caching strategy:
+Caching is not currently implemented. Planned caching strategy:
 
 - Redis for frequently accessed analytics
 - TTL: 5 minutes for real-time metrics, 1 hour for historical data
 
 ## Webhooks
 
-_Webhooks not yet implemented._
+Webhooks are not currently planned for this project.
 
 ---
 
-**Last Updated:** November 2, 2025
-**API Version:** 0.1.0
+**Last Updated:** November 9, 2025
+**API Version:** 1.0.0
+**Status:** Operational - 13 endpoints available

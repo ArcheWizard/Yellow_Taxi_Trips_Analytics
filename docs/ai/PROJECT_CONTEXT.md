@@ -8,9 +8,11 @@ This is a data analytics project designed to analyze NYC Yellow Taxi trip data. 
 - ETL pipeline development with Python
 - Data analysis using SQL (window functions, CTEs, aggregations)
 - RESTful API development with FastAPI
-- Data visualization and dashboard creation
+- Data visualization and dashboard creation with Metabase
 
 **Target Audience:** Data engineers, data analysts, backend developers learning data engineering concepts.
+
+**Current Status:** Phase 3 Complete (API Layer), Phase 4 In Progress (Dashboard Creation)
 
 ## 📐 Architecture Overview
 
@@ -19,9 +21,9 @@ This is a data analytics project designed to analyze NYC Yellow Taxi trip data. 
 - **Database:** PostgreSQL 14+ (with extensions: btree_gin)
 - **ETL:** Python 3.9+ with pandas, pyarrow for parquet files
 - **ORM/DB Access:** SQLAlchemy, psycopg2-binary
-- **API:** FastAPI, Uvicorn
+- **API:** FastAPI 0.104+, Uvicorn (ASGI server)
+- **Visualization:** Metabase (Docker container)
 - **Environment:** python-dotenv for configuration
-- **Future:** Metabase/Superset for visualization
 
 ### Data Flow
 
@@ -259,34 +261,37 @@ Stored in `.env` file (never committed):
 
 ## 🎯 Project Phases
 
-### Phase 1: Foundation (Current)
+### Phase 1: Foundation ✅ COMPLETED
 
 - Database setup
 - Schema design
 - Basic ETL pipeline
-- Initial data load
+- Initial data load (93,171 rides)
 
-### Phase 2: Analysis
+### Phase 2: Analysis ✅ COMPLETED
 
 - Write analysis queries
 - Optimize performance
-- Create materialized views
+- Create materialized views (8 views)
+- Performance monitoring
 
-### Phase 3: API Layer
+### Phase 3: API Layer ✅ COMPLETED
 
-- FastAPI implementation
+- FastAPI implementation (13 endpoints)
 - CRUD endpoints
 - Analytics endpoints
-- Authentication
+- Automatic documentation
+- Error handling and logging
 
-### Phase 4: Visualization
+### Phase 4: Visualization 🚧 IN PROGRESS
 
-- Dashboard design
-- Tool selection (Metabase vs Superset)
-- Interactive filters
-- Real-time metrics
+- Metabase installation ✅
+- Database connection ✅
+- Dashboard design ✅
+- Dashboard creation (pending)
+- Interactive filters (pending)
 
-### Phase 5: Optimization
+### Phase 5: Optimization (Future)
 
 - Query optimization
 - Caching layer (Redis)
@@ -314,5 +319,5 @@ Stored in `.env` file (never committed):
 
 ---
 
-**Last Updated:** November 2, 2025
-**Project Status:** Phase 1 - In Development
+**Last Updated:** November 9, 2025
+**Project Status:** Phase 3 Complete - API Layer Operational
