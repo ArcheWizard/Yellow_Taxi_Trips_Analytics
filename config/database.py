@@ -6,10 +6,10 @@ using environment variables loaded from .env file.
 """
 
 import os
+from typing import Optional
 
-import psycopg2
-from psycopg2 import pool
 from dotenv import load_dotenv
+from psycopg2.pool import ThreadedConnectionPool
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -20,7 +20,7 @@ load_dotenv()
 class DatabaseConfig:
     """Database configuration class for PostgreSQL connection with connection pooling."""
 
-    _connection_pool = None
+    _connection_pool: Optional[ThreadedConnectionPool] = None
 
     def __init__(self):
         """Initialize database configuration from environment variables."""
@@ -40,14 +40,14 @@ class DatabaseConfig:
         Uses SimpleConnectionPool for single-threaded applications.
         """
         try:
-            DatabaseConfig._connection_pool = psycopg2.pool.ThreadedConnectionPool(
+            DatabaseConfig._connection_pool = ThreadedConnectionPool(
                 minconn=2,  # Minimum connections to maintain
                 maxconn=20,  # Maximum concurrent connections
                 host=self.host,
                 port=self.port,
                 database=self.database,
                 user=self.user,
-                password=self.password
+                password=self.password,
             )
             print(f"Connection pool initialized: 2-20 connections to {self.database}")
         except Exception as e:
@@ -90,7 +90,13 @@ class DatabaseConfig:
 
         Returns:
             connection: psycopg2 connection instance from pool
+
+        Raises:
+            RuntimeError: If connection pool is not initialized
         """
+        if DatabaseConfig._connection_pool is None:
+            raise RuntimeError("Connection pool not initialized")
+
         try:
             return DatabaseConfig._connection_pool.getconn()
         except Exception as e:
@@ -103,7 +109,13 @@ class DatabaseConfig:
 
         Args:
             conn: psycopg2 connection to return to pool
+
+        Raises:
+            RuntimeError: If connection pool is not initialized
         """
+        if DatabaseConfig._connection_pool is None:
+            raise RuntimeError("Connection pool not initialized")
+
         try:
             DatabaseConfig._connection_pool.putconn(conn)
         except Exception as e:
@@ -128,3 +140,23 @@ if __name__ == "__main__":
     print(f"Port: {config.port}")
     print(f"User: {config.user}")
     print("Connection string generated successfully!")
+
+    # Create a connection pool
+    connection_pool = ThreadedConnectionPool(
+        minconn=1,  # Minimum number of connections
+        maxconn=10,  # Maximum number of connections
+        host="localhost",
+        database="mydb",
+        user="user",
+        password="password",
+    )
+
+    # Get a connection from the pool
+    conn = connection_pool.getconn()
+
+    # Use the connection
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users")
+
+    # Return connection to pool when done
+    connection_pool.putconn(conn)

@@ -1,10 +1,12 @@
 # City Rides Analytics Dashboard
 
-A comprehensive data analytics platform for analyzing NYC Yellow Taxi trip data using PostgreSQL, Python, and modern data engineering practices.
+A comprehensive data analytics platform for analyzing NYC Yellow Taxi trip data
+using PostgreSQL, Python, and modern data engineering practices.
 
 ## 🎯 Project Overview
 
-This project analyzes NYC taxi trip patterns, vendor performance, and customer behavior using real TLC (Taxi & Limousine Commission) data.
+This project analyzes NYC taxi trip patterns, vendor performance, and customer behavior
+using real TLC (Taxi & Limousine Commission) data.
 
 **Key Features:**
 
@@ -31,7 +33,8 @@ Complete documentation is available in the `docs/` folder:
 ### Quick Links
 
 - [Setup Guide](docs/human/SETUP.md) - Installation instructions
-- [Implementation Guide](docs/human/IMPLEMENTATION_GUIDE.md) - 25-step implementation plan
+- [Implementation Guide](docs/human/IMPLEMENTATION_GUIDE.md) - 25-step
+  implementation plan
 - [Database Documentation](docs/human/DATABASE.md) - Schema and queries
 - [Analytics Guide](docs/human/ANALYTICS.md) - SQL query examples
 
@@ -265,7 +268,8 @@ ab -n 1000 -c 10 http://localhost:8000/api/v1/analytics/summary
 
 ### API Documentation
 
-The FastAPI application provides interactive API documentation with automatic request/response examples:
+The FastAPI application provides interactive API documentation with automatic
+request/response examples:
 
 ![API Documentation - Main Interface](docs/screenshots/API-1.png)
 
@@ -281,7 +285,8 @@ List of available analytics endpoints:
 
 Distance segments analysis showing fare distribution by trip distance:
 
-![Distance Segments Bar Graph](docs/screenshots/Mv_Distance_Segments_Bar_Graph.png)
+![Distance Segments Bar Graph](docs/screenshots/Mv_Distance_Segments_Bar_Graph.png
+)
 
 Popular routes table showing the most frequent pickup-dropoff pairs:
 
@@ -289,7 +294,8 @@ Popular routes table showing the most frequent pickup-dropoff pairs:
 
 ## 🤝 Contributing
 
-This is a learning project. See [IMPLEMENTATION_GUIDE.md](docs/human/IMPLEMENTATION_GUIDE.md) for the complete development roadmap.
+This is a learning project. See [IMPLEMENTATION_GUIDE.md](docs/human/IMPLEMENTATION_GUIDE.md)
+for the complete development roadmap.
 
 ## 📧 Support
 

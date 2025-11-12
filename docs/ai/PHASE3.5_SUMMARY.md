@@ -42,6 +42,7 @@ Optimize API performance for production readiness by implementing connection poo
 **Solution:** Implemented `psycopg2.pool.ThreadedConnectionPool`
 
 **Changes:**
+
 - Updated `config/database.py`:
   - Added connection pool (2-20 connections)
   - `get_connection()` → gets from pool
@@ -63,6 +64,7 @@ Optimize API performance for production readiness by implementing connection poo
 **Solution:** Created `mv_analytics_summary` materialized view
 
 **SQL:**
+
 ```sql
 CREATE MATERIALIZED VIEW mv_analytics_summary AS
 SELECT
@@ -78,6 +80,7 @@ WHERE total_amount > 0 AND dropoff_datetime > pickup_datetime;
 ```
 
 **Database Service Logic:**
+
 - No date filters → Use `mv_analytics_summary` (1-2ms)
 - With date filters → Query `rides` table directly (50-90ms, but acceptable for filtered queries)
 
@@ -90,11 +93,13 @@ WHERE total_amount > 0 AND dropoff_datetime > pickup_datetime;
 **Added:** `/metrics` endpoint with detailed statistics
 
 **Features:**
+
 - Tracks response times per endpoint
 - Calculates min, max, mean, median, P95, P99
 - Uses middleware to log every request
 
 **Example Output:**
+
 ```json
 {
   "endpoints": {
@@ -113,6 +118,7 @@ WHERE total_amount > 0 AND dropoff_datetime > pickup_datetime;
 ```
 
 **Files Modified:**
+
 - `src/api/main.py`: Added `response_times` tracking and `/metrics` endpoint
 
 ---
@@ -164,17 +170,20 @@ WHERE total_amount > 0 AND dropoff_datetime > pickup_datetime;
 ## 🔄 Refresh Strategy
 
 ### Current Approach
+
 - **Frequency:** Manual after monthly data loads
 - **Method:** `REFRESH MATERIALIZED VIEW CONCURRENTLY`
 - **Materialized Views:** 9 views total
 - **Refresh Time:** ~1 second per view (~9 seconds total)
 
 ### When to Refresh
+
 - After loading new data (monthly)
 - When data is updated/corrected
 - Can be scheduled via cron for automated refreshes
 
 ### Script Location
+
 ```bash
 scripts/refresh_materialized_views.sh
 ```
@@ -184,6 +193,7 @@ scripts/refresh_materialized_views.sh
 ## 📝 Files Modified
 
 ### Core Changes
+
 1. **`config/database.py`** - Added connection pooling
 2. **`src/api/services/database.py`** - Updated all methods to use connection pool
 3. **`src/api/main.py`** - Added performance tracking and metrics endpoint
@@ -191,6 +201,7 @@ scripts/refresh_materialized_views.sh
 5. **`scripts/refresh_materialized_views.sh`** - Added new view to refresh list
 
 ### Total Lines Changed
+
 - ~300 lines of code modified
 - 1 new materialized view
 - 1 new endpoint (`/metrics`)
@@ -202,16 +213,19 @@ scripts/refresh_materialized_views.sh
 ### Test Commands
 
 1. **Single Request Test:**
+
 ```bash
 curl -w "\nTime: %{time_total}s\n" http://localhost:8000/api/v1/analytics/summary
 ```
 
 2. **Load Test:**
+
 ```bash
 ab -n 1000 -c 10 http://localhost:8000/api/v1/analytics/summary
 ```
 
 3. **Metrics:**
+
 ```bash
 curl http://localhost:8000/metrics | jq
 ```
@@ -239,6 +253,7 @@ Based on these proven results, here's the accurate response:
 > Right now I'm refreshing 9 materialized views after monthly NYC TLC data loads (batch-based, not streaming), using `REFRESH MATERIALIZED VIEW CONCURRENTLY` to keep queries responsive. All 9 views refresh in **~9 seconds total**.
 >
 > **API Performance (on 93K rows):**
+>
 > - **Single requests:** 1-5ms (materialized view queries)
 > - **Under load (10 concurrent users):** 7ms mean, 10ms P95
 > - **Throughput:** 1,353 requests/sec
@@ -255,16 +270,19 @@ Based on these proven results, here's the accurate response:
 ## 🔮 Future Optimizations
 
 ### Short-term (Next Month)
+
 - [ ] Add Redis caching for frequently accessed endpoints
 - [ ] Implement async database operations (asyncpg)
 - [ ] Add database read replicas for analytics queries
 
 ### Medium-term (3-6 Months)
+
 - [ ] Partition `rides` table by date
 - [ ] Implement incremental materialized view refresh (PostgreSQL 13+)
 - [ ] Add query result caching
 
 ### Long-term (If Scale Requires)
+
 - [ ] Evaluate TimescaleDB for time-series optimization
 - [ ] Consider DuckDB/Parquet for read-heavy analytical layer
 - [ ] Implement Citus for horizontal scaling
@@ -286,12 +304,14 @@ Based on these proven results, here's the accurate response:
 Phase 4.5 successfully transformed the API from a proof-of-concept to a production-ready system:
 
 **Performance Achievements:**
+
 - **53x faster** mean response time under load (374ms → 7ms)
 - **51x more throughput** (26 → 1,353 req/s)
 - **100% reliability** maintained (zero failed requests)
 - **18x faster** single requests on summary endpoint (90ms → 5ms)
 
 **Technical Achievements:**
+
 - Implemented enterprise-grade connection pooling
 - Created 9th materialized view for instant summary queries
 - Added comprehensive performance monitoring
@@ -304,11 +324,13 @@ Phase 4.5 successfully transformed the API from a proof-of-concept to a producti
 ## 🔄 Next Steps
 
 ### Phase 5: Dashboard Visualization (Continue)
+
 - Complete Metabase dashboard creation (4 dashboards planned)
 - Implement interactive filters and drill-downs
 - Create automated refresh schedules
 
 ### Future Phases (Optional)
+
 - **Phase 6:** Scale testing with full 3M row dataset
 - **Phase 7:** Advanced features (caching, async operations)
 - **Phase 8:** Production deployment and monitoring

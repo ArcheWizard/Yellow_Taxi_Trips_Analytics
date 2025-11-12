@@ -23,21 +23,19 @@
 
 ## 📊 Dashboard 1: Overview Dashboard
 
-### Goal
+### Overview Goal
 
 High-level KPIs and trends for quick insights
 
-### Metrics to Display
-
 #### 1. **KPI Cards (Top Row)**
 
-**Total Trips**
+#### 1. Total Trips
 
 ```sql
 SELECT COUNT(*) as total_trips FROM rides;
 ```
 
-**Total Revenue**
+#### 2. Total Revenue
 
 ```sql
 SELECT ROUND(SUM(total_amount)::numeric, 2) as total_revenue
@@ -45,7 +43,7 @@ FROM rides
 WHERE total_amount > 0;
 ```
 
-**Average Fare**
+#### 3. Average Fare
 
 ```sql
 SELECT ROUND(AVG(total_amount)::numeric, 2) as avg_fare
@@ -53,7 +51,7 @@ FROM rides
 WHERE total_amount > 0;
 ```
 
-**Average Distance**
+#### Average Distance
 
 ```sql
 SELECT ROUND(AVG(trip_distance)::numeric, 2) as avg_distance
@@ -109,7 +107,7 @@ ORDER BY revenue DESC;
 
 ### Dashboard Layout
 
-```
+```text
 ┌────────────┬────────────┬────────────┬────────────┐
 │ Total Trips│Total Revenue│  Avg Fare  │ Avg Dist   │
 │   93,171   │  $3.08M    │   $33.13   │  4.59 mi   │
@@ -131,7 +129,7 @@ ORDER BY revenue DESC;
 
 ## 📊 Dashboard 2: Time Analysis Dashboard
 
-### Goal
+### Time Analysis Goal
 
 Understand temporal patterns and peak hours
 
@@ -197,7 +195,7 @@ ORDER BY hour;
 
 ### Dashboard Layout
 
-```
+```text
 ┌───────────────────────────────────────────────────┐
 │                                                   │
 │          Hourly Heatmap (Day x Hour)              │
@@ -216,7 +214,7 @@ ORDER BY hour;
 
 ## 📊 Dashboard 3: Location Dashboard
 
-### Goal
+### Location Goal
 
 Geographic insights and route analysis
 
@@ -285,7 +283,7 @@ LIMIT 10;
 
 ### Dashboard Layout
 
-```
+```text
 ┌──────────────────────┬────────────────────────────┐
 │                      │                            │
 │  Top Pickup Zones    │  Top Dropoff Zones         │
@@ -306,7 +304,7 @@ LIMIT 10;
 
 ## 📊 Dashboard 4: Financial Dashboard
 
-### Goal
+### Financial Goal
 
 Revenue analysis and financial metrics
 

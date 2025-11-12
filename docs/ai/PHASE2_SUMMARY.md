@@ -111,7 +111,7 @@ Created `sql/performance_analysis.sql` with monitoring queries:
 
 #### Index Usage Statistics (Top 5)
 
-```
+```text
 zones.zones_pkey:          186,384 scans
 vendors.vendors_pkey:       93,175 scans
 rides.pickup_location:          12 scans
@@ -121,7 +121,7 @@ rides.pickup_datetime:           3 scans
 
 #### Storage Analysis
 
-```
+```text
 Table Sizes:
 - rides:    26 MB (14 MB table + 12 MB indexes)
 - zones:    64 KB
@@ -226,7 +226,7 @@ Materialized Views: 712 KB total
 
 ### New Files
 
-```
+```text
 sql/queries/advanced_analytics.sql     (350+ lines)
 sql/materialized_views.sql             (250+ lines)
 sql/performance_analysis.sql           (230+ lines)

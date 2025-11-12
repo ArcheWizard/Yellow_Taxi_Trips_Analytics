@@ -2,15 +2,17 @@
 City Rides Analytics API - FastAPI Application
 Main application file with route configuration and middleware.
 """
+
+import logging
+import statistics
+import sys
+import time
+from collections import defaultdict
+from pathlib import Path
+from src.api.routes import analytics, health, rides
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-import logging
-import sys
-from pathlib import Path
-import time
-import statistics
-from collections import defaultdict
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent
@@ -18,13 +20,9 @@ sys.path.insert(0, str(project_root))
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
-
-# Import routes
-from src.api.routes import health, rides, analytics
 
 # Create FastAPI application
 app = FastAPI(
@@ -33,7 +31,7 @@ app = FastAPI(
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
-    openapi_url="/openapi.json"
+    openapi_url="/openapi.json",
 )
 
 # Configure CORS
@@ -47,6 +45,7 @@ app.add_middleware(
 
 # Track response times for performance monitoring
 response_times = defaultdict(list)
+
 
 # Middleware to log response time
 @app.middleware("http")
@@ -67,11 +66,11 @@ async def log_response_time(request: Request, call_next):
     avg_time = statistics.mean(times) if times else duration
 
     logger.info(
-        f"{endpoint} - {duration:.2f}ms "
-        f"(avg: {avg_time:.2f}ms, samples: {len(times)})"
+        f"{endpoint} - {duration:.2f}ms (avg: {avg_time:.2f}ms, samples: {len(times)})"
     )
 
     return response
+
 
 # Exception handlers
 @app.exception_handler(Exception)
@@ -79,12 +78,9 @@ async def global_exception_handler(request: Request, exc: Exception):
     """Handle all unhandled exceptions."""
     logger.error(f"Unhandled exception: {exc}", exc_info=True)
     return JSONResponse(
-        status_code=500,
-        content={
-            "error": "Internal server error",
-            "message": str(exc)
-        }
+        status_code=500, content={"error": "Internal server error", "message": str(exc)}
     )
+
 
 # Include routers
 app.include_router(health.router, tags=["Health"])
@@ -111,12 +107,16 @@ async def get_metrics():
                 "max_ms": round(max(times), 2),
                 "avg_ms": round(statistics.mean(times), 2),
                 "median_ms": round(statistics.median(times), 2),
-                "p95_ms": round(sorted_times[int(count * 0.95)] if count >= 20 else max(times), 2),
-                "p99_ms": round(sorted_times[int(count * 0.99)] if count >= 100 else max(times), 2),
+                "p95_ms": round(
+                    sorted_times[int(count * 0.95)] if count >= 20 else max(times), 2
+                ),
+                "p99_ms": round(
+                    sorted_times[int(count * 0.99)] if count >= 100 else max(times), 2
+                ),
             }
     return {
         "endpoints": metrics,
-        "total_requests": sum(len(times) for times in response_times.values())
+        "total_requests": sum(len(times) for times in response_times.values()),
     }
 
 
@@ -125,7 +125,7 @@ async def get_metrics():
 async def startup_event():
     """Log startup information."""
     logger.info("City Rides Analytics API starting up...")
-    logger.info(f"Documentation available at: http://localhost:8000/docs")
+    logger.info("Documentation available at: http://localhost:8000/docs")
     logger.info("Connection pooling enabled: 2-20 connections")
 
 
@@ -138,18 +138,15 @@ async def shutdown_event():
     # Close all database connections
     try:
         from config.database import DatabaseConfig
+
         db_config = DatabaseConfig()
         db_config.close_all_connections()
         logger.info("Database connections closed successfully")
     except Exception as e:
         logger.error(f"Error closing database connections: {e}")
 
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(
-        "main:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=True,
-        log_level="info"
-    )
+
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True, log_level="info")

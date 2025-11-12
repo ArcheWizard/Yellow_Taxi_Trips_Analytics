@@ -1,15 +1,18 @@
 """
 Pydantic models for API request/response schemas.
 """
-from pydantic import BaseModel, Field, ConfigDict
-from typing import Optional, List
+
 from datetime import datetime
 from decimal import Decimal
+from typing import List, Optional
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 # Base response model
 class PaginationMetadata(BaseModel):
     """Pagination metadata for list responses."""
+
     total: int = Field(..., description="Total number of records")
     limit: int = Field(..., description="Number of records per page")
     offset: int = Field(..., description="Number of records skipped")
@@ -20,6 +23,7 @@ class PaginationMetadata(BaseModel):
 # Ride models
 class RideBase(BaseModel):
     """Base ride model with common fields."""
+
     vendor_id: int = Field(..., description="Vendor ID (1 or 2)")
     pickup_datetime: datetime = Field(..., description="Pickup timestamp")
     dropoff_datetime: datetime = Field(..., description="Dropoff timestamp")
@@ -28,16 +32,22 @@ class RideBase(BaseModel):
     pickup_location_id: Optional[int] = Field(None, description="Pickup zone ID")
     dropoff_location_id: Optional[int] = Field(None, description="Dropoff zone ID")
     rate_code_id: Optional[int] = Field(None, description="Rate code")
-    store_and_fwd_flag: Optional[str] = Field(None, description="Store and forward flag")
+    store_and_fwd_flag: Optional[str] = Field(
+        None, description="Store and forward flag"
+    )
     payment_type: int = Field(..., description="Payment type (1-6)")
     fare_amount: Decimal = Field(..., description="Base fare amount")
     extra: Optional[Decimal] = Field(None, description="Extra charges")
     mta_tax: Optional[Decimal] = Field(None, description="MTA tax")
     tip_amount: Optional[Decimal] = Field(None, description="Tip amount")
     tolls_amount: Optional[Decimal] = Field(None, description="Tolls amount")
-    improvement_surcharge: Optional[Decimal] = Field(None, description="Improvement surcharge")
+    improvement_surcharge: Optional[Decimal] = Field(
+        None, description="Improvement surcharge"
+    )
     total_amount: Decimal = Field(..., description="Total amount")
-    congestion_surcharge: Optional[Decimal] = Field(None, description="Congestion surcharge")
+    congestion_surcharge: Optional[Decimal] = Field(
+        None, description="Congestion surcharge"
+    )
     airport_fee: Optional[Decimal] = Field(None, description="Airport fee")
 
     model_config = ConfigDict(from_attributes=True)
@@ -45,14 +55,18 @@ class RideBase(BaseModel):
 
 class Ride(RideBase):
     """Complete ride model with ID."""
+
     ride_id: int = Field(..., description="Unique ride identifier")
-    created_at: Optional[datetime] = Field(None, description="Record creation timestamp")
+    created_at: Optional[datetime] = Field(
+        None, description="Record creation timestamp"
+    )
 
     model_config = ConfigDict(from_attributes=True)
 
 
 class RideListResponse(BaseModel):
     """Response model for paginated list of rides."""
+
     data: List[Ride]
     metadata: PaginationMetadata
 
@@ -62,6 +76,7 @@ class RideListResponse(BaseModel):
 # Analytics models
 class HourlyStat(BaseModel):
     """Hourly statistics model."""
+
     date: datetime
     hour: int
     trip_count: int
@@ -77,6 +92,7 @@ class HourlyStat(BaseModel):
 
 class LocationStat(BaseModel):
     """Location statistics model."""
+
     location_id: int
     borough: Optional[str]
     zone: Optional[str]
@@ -91,6 +107,7 @@ class LocationStat(BaseModel):
 
 class VendorDailyPerformance(BaseModel):
     """Vendor daily performance model."""
+
     vendor_id: int
     vendor_name: str
     date: datetime
@@ -104,6 +121,7 @@ class VendorDailyPerformance(BaseModel):
 
 class PaymentHourlyStat(BaseModel):
     """Payment type hourly statistics."""
+
     hour: int
     payment_type: int
     trip_count: int
@@ -115,6 +133,7 @@ class PaymentHourlyStat(BaseModel):
 
 class DistanceSegment(BaseModel):
     """Distance segment statistics."""
+
     segment: str
     trip_count: int
     avg_fare: Decimal
@@ -126,6 +145,7 @@ class DistanceSegment(BaseModel):
 
 class TimePattern(BaseModel):
     """Time pattern statistics."""
+
     day_of_week: int
     hour: int
     trip_count: int
@@ -137,6 +157,7 @@ class TimePattern(BaseModel):
 
 class PopularRoute(BaseModel):
     """Popular route statistics."""
+
     pickup_location_id: int
     dropoff_location_id: int
     pickup_zone: Optional[str]
@@ -151,6 +172,7 @@ class PopularRoute(BaseModel):
 
 class AnalyticsSummary(BaseModel):
     """Overall analytics summary."""
+
     total_trips: int
     total_revenue: Decimal
     avg_fare: Decimal
@@ -165,6 +187,7 @@ class AnalyticsSummary(BaseModel):
 # Health check models
 class HealthCheck(BaseModel):
     """Health check response."""
+
     status: str = Field(..., description="API status")
     database: str = Field(..., description="Database status")
     timestamp: datetime = Field(..., description="Current timestamp")
@@ -174,6 +197,7 @@ class HealthCheck(BaseModel):
 
 class WelcomeMessage(BaseModel):
     """Welcome message response."""
+
     message: str
     version: str
     status: str

@@ -1,17 +1,17 @@
 """
 Health check endpoints for API status monitoring.
 """
-from fastapi import APIRouter, HTTPException
-from datetime import datetime
+
 import sys
+from datetime import datetime
 from pathlib import Path
+from src.api.models import HealthCheck, WelcomeMessage
+from src.api.services.database import db_service
+from fastapi import APIRouter, HTTPException
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
-
-from src.api.models import HealthCheck, WelcomeMessage
-from src.api.services.database import db_service
 
 router = APIRouter()
 
@@ -27,7 +27,7 @@ async def root():
         message="City Rides Analytics API",
         version="1.0.0",
         status="running",
-        docs_url="/docs"
+        docs_url="/docs",
     )
 
 
@@ -42,13 +42,6 @@ async def health_check():
     db_status = "healthy" if db_service.test_connection() else "unhealthy"
 
     if db_status == "unhealthy":
-        raise HTTPException(
-            status_code=503,
-            detail="Database connection failed"
-        )
+        raise HTTPException(status_code=503, detail="Database connection failed")
 
-    return HealthCheck(
-        status="healthy",
-        database=db_status,
-        timestamp=datetime.now()
-    )
+    return HealthCheck(status="healthy", database=db_status, timestamp=datetime.now())

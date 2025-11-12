@@ -222,7 +222,7 @@ Created `scripts/test_api.sh` - comprehensive endpoint testing:
 
 ### Code Organization
 
-```
+```text
 src/api/
 ├── main.py              # FastAPI app, middleware, routes
 ├── models.py            # Pydantic schemas (183 lines)

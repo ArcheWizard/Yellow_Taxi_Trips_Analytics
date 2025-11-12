@@ -34,7 +34,7 @@ Establish the foundational infrastructure for the NYC Taxi Analytics project:
 
 **Project Structure Created:**
 
-```
+```text
 Yellow_Taxi_Trips_Analytics/
 ├── config/
 │   ├── __init__.py
@@ -566,7 +566,7 @@ python scripts/verify_setup.py
 
 **Output Example:**
 
-```
+```text
 ============================================================
 1. Checking Environment Configuration...
 ============================================================
@@ -658,26 +658,26 @@ python scripts/verify_setup.py
 
 #### AI Assistant Documentation (`docs/ai/`)
 
-7. **`PROJECT_CONTEXT.md`** (400 lines)
+1. **`PROJECT_CONTEXT.md`** (400 lines)
    - Project purpose and goals
    - Architecture overview
    - Technology stack details
    - Design decisions and rationale
 
-8. **`DEVELOPMENT_GUIDE.md`** (500 lines)
+2. **`DEVELOPMENT_GUIDE.md`** (500 lines)
    - Coding standards
    - Python style guide
    - SQL best practices
    - Common patterns
    - Testing guidelines
 
-9. **`SCHEMA_REFERENCE.md`** (300 lines)
+3. **`SCHEMA_REFERENCE.md`** (300 lines)
    - Quick schema reference
    - Common join patterns
    - Query templates
    - Lookup value tables
 
-10. **`PROGRESS.md`** (350 lines)
+4. **`PROGRESS.md`** (350 lines)
     - Detailed progress tracking
     - Completed tasks with timestamps
     - Next steps and roadmap
@@ -685,7 +685,7 @@ python scripts/verify_setup.py
 
 #### Root Documentation
 
-11. **`docs/INDEX.md`** (100 lines)
+1. **`docs/INDEX.md`** (100 lines)
     - Documentation hub
     - Navigation guide
     - Quick links by task

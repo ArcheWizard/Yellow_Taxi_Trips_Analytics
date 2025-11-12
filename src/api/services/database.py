@@ -2,17 +2,17 @@
 Database service layer for API operations.
 Handles all database queries and connections.
 """
-import sys
-from pathlib import Path
-from typing import List, Optional, Dict, Any
-from datetime import datetime
+
 import logging
+import sys
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+from config.database import DatabaseConfig
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
-
-from config.database import DatabaseConfig
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +52,7 @@ class DatabaseService:
         vendor_id: Optional[int] = None,
         payment_type: Optional[int] = None,
         date_from: Optional[datetime] = None,
-        date_to: Optional[datetime] = None
+        date_to: Optional[datetime] = None,
     ) -> Dict[str, Any]:
         """
         Get paginated list of rides with optional filters.
@@ -180,9 +180,7 @@ class DatabaseService:
                 self.config.return_connection(conn)
 
     def get_analytics_summary(
-        self,
-        date_from: Optional[datetime] = None,
-        date_to: Optional[datetime] = None
+        self, date_from: Optional[datetime] = None, date_to: Optional[datetime] = None
     ) -> Dict[str, Any]:
         """
         Get overall analytics summary.
@@ -216,7 +214,10 @@ class DatabaseService:
                 cursor.execute(query)
             else:
                 # Use original query with date filters
-                where_conditions = ["total_amount > 0", "dropoff_datetime > pickup_datetime"]
+                where_conditions = [
+                    "total_amount > 0",
+                    "dropoff_datetime > pickup_datetime",
+                ]
                 params = []
 
                 if date_from:

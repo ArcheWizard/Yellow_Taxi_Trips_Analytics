@@ -36,7 +36,7 @@ After completing initial setup:
 
 2. **Connection Details:**
 
-   ```
+   ```text
    Database type: PostgreSQL
    Name: City Rides Analytics
    Host: host.docker.internal
@@ -124,7 +124,9 @@ docker rm metabase
 ```bash
 docker stop metabase
 docker rm metabase
-docker run -d -p 3000:3000 --name metabase --add-host=host.docker.internal:host-gateway metabase/metabase
+```bash
+docker run -d -p 3000:3000 --name metabase \
+  --add-host=host.docker.internal:host-gateway metabase/metabase
 ```
 
 ## 💾 Data Persistence

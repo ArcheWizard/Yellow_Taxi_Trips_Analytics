@@ -1,30 +1,40 @@
 """
 Rides endpoints for CRUD operations.
 """
-from fastapi import APIRouter, HTTPException, Query
-from typing import Optional
-from datetime import datetime
+
 import sys
+from datetime import datetime
 from pathlib import Path
+from typing import Optional
+from src.api.models import PaginationMetadata, Ride, RideListResponse
+from src.api.services.database import db_service
+from fastapi import APIRouter, HTTPException, Query
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
-
-from src.api.models import Ride, RideListResponse, PaginationMetadata
-from src.api.services.database import db_service
 
 router = APIRouter()
 
 
 @router.get("/rides", response_model=RideListResponse)
 async def get_rides(
-    limit: int = Query(default=100, ge=1, le=1000, description="Number of records to return"),
+    limit: int = Query(
+        default=100, ge=1, le=1000, description="Number of records to return"
+    ),
     offset: int = Query(default=0, ge=0, description="Number of records to skip"),
-    vendor_id: Optional[int] = Query(default=None, ge=1, le=2, description="Filter by vendor ID (1 or 2)"),
-    payment_type: Optional[int] = Query(default=None, ge=1, le=6, description="Filter by payment type (1-6)"),
-    date_from: Optional[datetime] = Query(default=None, description="Filter rides from this date"),
-    date_to: Optional[datetime] = Query(default=None, description="Filter rides until this date")
+    vendor_id: Optional[int] = Query(
+        default=None, ge=1, le=2, description="Filter by vendor ID (1 or 2)"
+    ),
+    payment_type: Optional[int] = Query(
+        default=None, ge=1, le=6, description="Filter by payment type (1-6)"
+    ),
+    date_from: Optional[datetime] = Query(
+        default=None, description="Filter rides from this date"
+    ),
+    date_to: Optional[datetime] = Query(
+        default=None, description="Filter rides until this date"
+    ),
 ):
     """
     Get paginated list of rides.
@@ -47,16 +57,14 @@ async def get_rides(
             vendor_id=vendor_id,
             payment_type=payment_type,
             date_from=date_from,
-            date_to=date_to
+            date_to=date_to,
         )
 
         return RideListResponse(
             data=[Ride(**ride) for ride in result["data"]],
             metadata=PaginationMetadata(
-                total=result["total"],
-                limit=limit,
-                offset=offset
-            )
+                total=result["total"], limit=limit, offset=offset
+            ),
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching rides: {str(e)}")
@@ -81,8 +89,7 @@ async def get_ride_by_id(ride_id: int):
 
         if not ride:
             raise HTTPException(
-                status_code=404,
-                detail=f"Ride with ID {ride_id} not found"
+                status_code=404, detail=f"Ride with ID {ride_id} not found"
             )
 
         return Ride(**ride)

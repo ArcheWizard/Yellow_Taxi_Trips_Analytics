@@ -129,7 +129,9 @@ SELECT
     COUNT(*) as trips,
     AVG(trip_distance) as avg_distance,
     AVG(EXTRACT(EPOCH FROM (dropoff_datetime - pickup_datetime))/60) as avg_duration_minutes,
-    AVG(trip_distance / NULLIF(EXTRACT(EPOCH FROM (dropoff_datetime - pickup_datetime))/3600, 0)) as avg_speed_mph
+    AVG(trip_distance / NULLIF(EXTRACT(EPOCH FROM (dropoff_datetime - pickup_datetime))
+    /3600, 0))
+    as avg_speed_mph
 FROM rides
 WHERE trip_distance > 0
   AND dropoff_datetime > pickup_datetime
@@ -142,10 +144,14 @@ ORDER BY hour;
 ```sql
 SELECT
     CASE
-        WHEN EXTRACT(EPOCH FROM (dropoff_datetime - pickup_datetime))/60 <= 10 THEN '0-10 min'
-        WHEN EXTRACT(EPOCH FROM (dropoff_datetime - pickup_datetime))/60 <= 20 THEN '10-20 min'
-        WHEN EXTRACT(EPOCH FROM (dropoff_datetime - pickup_datetime))/60 <= 30 THEN '20-30 min'
-        WHEN EXTRACT(EPOCH FROM (dropoff_datetime - pickup_datetime))/60 <= 60 THEN '30-60 min'
+        WHEN EXTRACT(EPOCH FROM (dropoff_datetime - pickup_datetime))/60 <= 10
+        THEN '0-10 min'
+        WHEN EXTRACT(EPOCH FROM (dropoff_datetime - pickup_datetime))/60 <= 20
+        THEN '10-20 min'
+        WHEN EXTRACT(EPOCH FROM (dropoff_datetime - pickup_datetime))/60 <= 30
+        THEN '20-30 min'
+        WHEN EXTRACT(EPOCH FROM (dropoff_datetime - pickup_datetime))/60 <= 60
+        THEN '30-60 min'
         ELSE '60+ min'
     END as duration_range,
     COUNT(*) as trip_count,
@@ -484,10 +490,12 @@ SELECT
     t.revenue_today,
     t.avg_fare_today,
     t.avg_distance_today,
-    ROUND(((t.trips_today - y.trips_yesterday)::NUMERIC /
-           NULLIF(y.trips_yesterday, 0)) * 100, 2) as trip_change_pct,
-    ROUND(((t.revenue_today - y.revenue_yesterday)::NUMERIC /
-           NULLIF(y.revenue_yesterday, 0)) * 100, 2) as revenue_change_pct
+    ROUND((t.trips_today - y.trips_yesterday)::NUMERIC
+           / NULLIF(y.trips_yesterday, 0) * 100, 2)
+           as trip_change_pct,
+    ROUND((t.revenue_today - y.revenue_yesterday)::NUMERIC
+           / NULLIF(y.revenue_yesterday, 0) * 100, 2)
+           as revenue_change_pct
 FROM today_stats t
 CROSS JOIN yesterday_stats y;
 ```

@@ -1,35 +1,39 @@
 """
 Analytics endpoints for accessing pre-computed statistics.
 """
-from fastapi import APIRouter, HTTPException, Query
-from typing import Optional, List
-from datetime import datetime
+
 import sys
+from datetime import datetime
 from pathlib import Path
+from typing import List, Optional
+from src.api.models import (
+    AnalyticsSummary,
+    DistanceSegment,
+    HourlyStat,
+    LocationStat,
+    PaymentHourlyStat,
+    PopularRoute,
+    TimePattern,
+    VendorDailyPerformance,
+)
+from src.api.services.database import db_service
+from fastapi import APIRouter, HTTPException, Query
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
-
-from src.api.models import (
-    AnalyticsSummary,
-    HourlyStat,
-    LocationStat,
-    VendorDailyPerformance,
-    PaymentHourlyStat,
-    DistanceSegment,
-    TimePattern,
-    PopularRoute
-)
-from src.api.services.database import db_service
 
 router = APIRouter()
 
 
 @router.get("/summary", response_model=AnalyticsSummary)
 async def get_summary(
-    date_from: Optional[datetime] = Query(default=None, description="Start date for analysis"),
-    date_to: Optional[datetime] = Query(default=None, description="End date for analysis")
+    date_from: Optional[datetime] = Query(
+        default=None, description="Start date for analysis"
+    ),
+    date_to: Optional[datetime] = Query(
+        default=None, description="End date for analysis"
+    ),
 ):
     """
     Get overall analytics summary.
@@ -42,10 +46,7 @@ async def get_summary(
     - Overall statistics including trip count, revenue, averages
     """
     try:
-        result = db_service.get_analytics_summary(
-            date_from=date_from,
-            date_to=date_to
-        )
+        result = db_service.get_analytics_summary(date_from=date_from, date_to=date_to)
         return AnalyticsSummary(**result)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching summary: {str(e)}")
@@ -53,7 +54,9 @@ async def get_summary(
 
 @router.get("/hourly", response_model=List[HourlyStat])
 async def get_hourly_stats(
-    limit: int = Query(default=100, ge=1, le=500, description="Number of records to return")
+    limit: int = Query(
+        default=100, ge=1, le=500, description="Number of records to return"
+    ),
 ):
     """
     Get hourly trip statistics.
@@ -68,12 +71,16 @@ async def get_hourly_stats(
         results = db_service.get_hourly_stats(limit=limit)
         return [HourlyStat(**stat) for stat in results]
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching hourly stats: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Error fetching hourly stats: {str(e)}"
+        )
 
 
 @router.get("/locations/pickup", response_model=List[LocationStat])
 async def get_top_pickup_locations(
-    limit: int = Query(default=20, ge=1, le=100, description="Number of locations to return")
+    limit: int = Query(
+        default=20, ge=1, le=100, description="Number of locations to return"
+    ),
 ):
     """
     Get top pickup locations.
@@ -88,12 +95,16 @@ async def get_top_pickup_locations(
         results = db_service.get_top_pickup_locations(limit=limit)
         return [LocationStat(**stat) for stat in results]
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching pickup locations: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Error fetching pickup locations: {str(e)}"
+        )
 
 
 @router.get("/locations/dropoff", response_model=List[LocationStat])
 async def get_top_dropoff_locations(
-    limit: int = Query(default=20, ge=1, le=100, description="Number of locations to return")
+    limit: int = Query(
+        default=20, ge=1, le=100, description="Number of locations to return"
+    ),
 ):
     """
     Get top dropoff locations.
@@ -108,15 +119,19 @@ async def get_top_dropoff_locations(
         results = db_service.get_top_dropoff_locations(limit=limit)
         # Rename 'dropoff_count' to 'trip_count' for the LocationStat model
         for stat in results:
-            stat['trip_count'] = stat.pop('dropoff_count')
+            stat["trip_count"] = stat.pop("dropoff_count")
         return [LocationStat(**stat) for stat in results]
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching dropoff locations: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Error fetching dropoff locations: {str(e)}"
+        )
 
 
 @router.get("/vendors/performance", response_model=List[VendorDailyPerformance])
 async def get_vendor_performance(
-    limit: int = Query(default=30, ge=1, le=100, description="Number of records to return")
+    limit: int = Query(
+        default=30, ge=1, le=100, description="Number of records to return"
+    ),
 ):
     """
     Get vendor daily performance statistics.
@@ -131,7 +146,9 @@ async def get_vendor_performance(
         results = db_service.get_vendor_performance(limit=limit)
         return [VendorDailyPerformance(**stat) for stat in results]
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching vendor performance: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Error fetching vendor performance: {str(e)}"
+        )
 
 
 @router.get("/payment/hourly", response_model=List[PaymentHourlyStat])
@@ -146,7 +163,9 @@ async def get_payment_hourly_stats():
         results = db_service.get_payment_hourly_stats()
         return [PaymentHourlyStat(**stat) for stat in results]
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching payment stats: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Error fetching payment stats: {str(e)}"
+        )
 
 
 @router.get("/distance/segments", response_model=List[DistanceSegment])
@@ -161,12 +180,16 @@ async def get_distance_segments():
         results = db_service.get_distance_segments()
         return [DistanceSegment(**stat) for stat in results]
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching distance segments: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Error fetching distance segments: {str(e)}"
+        )
 
 
 @router.get("/patterns/time", response_model=List[TimePattern])
 async def get_time_patterns(
-    limit: int = Query(default=168, ge=1, le=500, description="Number of records to return")
+    limit: int = Query(
+        default=168, ge=1, le=500, description="Number of records to return"
+    ),
 ):
     """
     Get time-based patterns (day of week + hour).
@@ -181,12 +204,16 @@ async def get_time_patterns(
         results = db_service.get_time_patterns(limit=limit)
         return [TimePattern(**stat) for stat in results]
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching time patterns: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Error fetching time patterns: {str(e)}"
+        )
 
 
 @router.get("/routes/popular", response_model=List[PopularRoute])
 async def get_popular_routes(
-    limit: int = Query(default=20, ge=1, le=100, description="Number of routes to return")
+    limit: int = Query(
+        default=20, ge=1, le=100, description="Number of routes to return"
+    ),
 ):
     """
     Get most popular routes (pickup-dropoff pairs).
@@ -201,4 +228,6 @@ async def get_popular_routes(
         results = db_service.get_popular_routes(limit=limit)
         return [PopularRoute(**stat) for stat in results]
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching popular routes: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Error fetching popular routes: {str(e)}"
+        )
