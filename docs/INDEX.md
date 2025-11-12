@@ -2,7 +2,7 @@
 
 Welcome to the City Rides Analytics Dashboard documentation!
 
-**Project Status:** Phase 3 Complete (API Layer) | Phase 4 In Progress (Dashboards)
+**Project Status:** Phase 3.5 Complete (Performance Optimization) | Phase 4 In Progress (Dashboards)
 
 ## 📚 For Human Collaborators
 
@@ -18,7 +18,7 @@ Navigate to the `human/` folder for user-facing documentation:
 
 - **[DATABASE.md](human/DATABASE.md)** - Database schema, tables, indexes, and maintenance
 - **[ANALYTICS.md](human/ANALYTICS.md)** - SQL query examples and analytics patterns
-- **[API.md](human/API.md)** - REST API documentation and endpoints (13 endpoints)
+- **[API.md](human/API.md)** - REST API documentation and endpoints (14 endpoints)
 - **[METABASE_SETUP.md](human/METABASE_SETUP.md)** - Metabase installation and dashboard creation guide
 
 ## 🤖 For AI Assistants
@@ -31,7 +31,9 @@ Navigate to the `ai/` folder for AI-optimized context:
 - **[DEVELOPMENT_GUIDE.md](ai/DEVELOPMENT_GUIDE.md)** - Coding standards, patterns, and best practices
 - **[SCHEMA_REFERENCE.md](ai/SCHEMA_REFERENCE.md)** - Quick database schema reference with query patterns
 - **[PROGRESS.md](ai/PROGRESS.md)** - Detailed project progress and completion status
+- **[PHASE2_SUMMARY.md](ai/PHASE2_SUMMARY.md)** - Advanced analytics implementation summary
 - **[PHASE3_SUMMARY.md](ai/PHASE3_SUMMARY.md)** - FastAPI implementation summary
+- **[PHASE3.5_SUMMARY.md](ai/PHASE3.5_SUMMARY.md)** - Performance optimization summary
 - **[PHASE4_SUMMARY.md](ai/PHASE4_SUMMARY.md)** - Metabase dashboard specifications
 
 ## 🎯 Quick Navigation by Task
@@ -75,15 +77,16 @@ docs/
 │   ├── IMPLEMENTATION_GUIDE.md    # Step-by-step guide (25 steps)
 │   ├── DATABASE.md                # Database documentation
 │   ├── ANALYTICS.md               # Query examples
-│   ├── API.md                     # API documentation
+│   ├── API.md                     # API documentation (14 endpoints)
 │   └── METABASE_SETUP.md          # Dashboard setup
-└── ai/                             # For AI assistants
+├── ai/                             # For AI assistants
     ├── PROJECT_CONTEXT.md         # Architecture & decisions
     ├── DEVELOPMENT_GUIDE.md       # Coding standards
     ├── SCHEMA_REFERENCE.md        # Quick schema reference
     ├── PROGRESS.md                # Project progress tracking
     ├── PHASE2_SUMMARY.md          # Analytics phase summary
     ├── PHASE3_SUMMARY.md          # API phase summary
+    ├── PHASE3.5_SUMMARY.md        # Performance optimization summary
     └── PHASE4_SUMMARY.md          # Dashboard phase summary
 ```
 
@@ -108,5 +111,6 @@ When making changes to the project:
 
 ---
 
-**Last Updated:** November 9, 2025
-**Project Version:** 1.0.0
+**Last Updated:** November 12, 2025
+**Project Version:** 1.1.0
+**API Status:** Production-Ready (1,353 req/s)

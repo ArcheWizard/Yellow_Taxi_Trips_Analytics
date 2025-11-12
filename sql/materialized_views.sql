@@ -230,6 +230,29 @@ CREATE INDEX IF NOT EXISTS idx_mv_time_patterns_hour ON mv_time_patterns(hour);
 COMMENT ON MATERIALIZED VIEW mv_time_patterns IS 'Trip patterns by day of week and hour';
 
 -- ====================
+-- 8. ANALYTICS SUMMARY
+-- ====================
+
+-- Overall analytics summary for fast dashboard queries
+CREATE MATERIALIZED VIEW IF NOT EXISTS mv_analytics_summary AS
+SELECT
+    COUNT(*) as total_trips,
+    ROUND(SUM(total_amount)::numeric, 2) as total_revenue,
+    ROUND(AVG(total_amount)::numeric, 2) as avg_fare,
+    ROUND(AVG(trip_distance)::numeric, 2) as avg_distance,
+    ROUND(AVG(EXTRACT(EPOCH FROM (dropoff_datetime - pickup_datetime))/60)::numeric, 2) as avg_duration_min,
+    MIN(pickup_datetime) as date_range_start,
+    MAX(dropoff_datetime) as date_range_end
+FROM rides
+WHERE
+    total_amount > 0
+    AND dropoff_datetime > pickup_datetime;
+
+CREATE INDEX IF NOT EXISTS idx_mv_analytics_summary_trips ON mv_analytics_summary(total_trips);
+
+COMMENT ON MATERIALIZED VIEW mv_analytics_summary IS 'Pre-computed overall analytics summary for fast dashboard loading';
+
+-- ====================
 -- REFRESH FUNCTIONS
 -- ====================
 
@@ -245,6 +268,7 @@ BEGIN
     REFRESH MATERIALIZED VIEW CONCURRENTLY mv_distance_segments;
     REFRESH MATERIALIZED VIEW CONCURRENTLY mv_popular_routes;
     REFRESH MATERIALIZED VIEW CONCURRENTLY mv_time_patterns;
+    REFRESH MATERIALIZED VIEW CONCURRENTLY mv_analytics_summary;
     RAISE NOTICE 'All materialized views refreshed successfully at %', now();
 END;
 $$ LANGUAGE plpgsql;

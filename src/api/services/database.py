@@ -31,13 +31,14 @@ class DatabaseService:
         Returns:
             bool: True if connection successful, False otherwise
         """
+        conn = None
         try:
             conn = self.config.get_connection()
             if conn:
                 cursor = conn.cursor()
                 cursor.execute("SELECT 1")
                 cursor.close()
-                conn.close()
+                self.config.return_connection(conn)
                 return True
             return False
         except Exception as e:
@@ -67,6 +68,7 @@ class DatabaseService:
         Returns:
             Dictionary with 'data' (list of rides) and 'total' (total count)
         """
+        conn = None
         try:
             conn = self.config.get_connection()
             cursor = conn.cursor()
@@ -120,13 +122,15 @@ class DatabaseService:
             rides = [dict(zip(columns, row)) for row in cursor.fetchall()]
 
             cursor.close()
-            conn.close()
 
             return {"data": rides, "total": total}
 
         except Exception as e:
             logger.error(f"Error fetching rides: {e}")
             raise
+        finally:
+            if conn:
+                self.config.return_connection(conn)
 
     def get_ride_by_id(self, ride_id: int) -> Optional[Dict[str, Any]]:
         """
@@ -138,6 +142,7 @@ class DatabaseService:
         Returns:
             Dictionary with ride data or None if not found
         """
+        conn = None
         try:
             conn = self.config.get_connection()
             cursor = conn.cursor()
@@ -164,13 +169,15 @@ class DatabaseService:
                 result = None
 
             cursor.close()
-            conn.close()
 
             return result
 
         except Exception as e:
             logger.error(f"Error fetching ride {ride_id}: {e}")
             raise
+        finally:
+            if conn:
+                self.config.return_connection(conn)
 
     def get_analytics_summary(
         self,
@@ -179,6 +186,7 @@ class DatabaseService:
     ) -> Dict[str, Any]:
         """
         Get overall analytics summary.
+        Uses materialized view for fast queries when no date filters are applied.
 
         Args:
             date_from: Start date for analysis
@@ -187,51 +195,72 @@ class DatabaseService:
         Returns:
             Dictionary with summary statistics
         """
+        conn = None
         try:
             conn = self.config.get_connection()
             cursor = conn.cursor()
 
-            where_conditions = ["total_amount > 0", "dropoff_datetime > pickup_datetime"]
-            params = []
+            # If no date filters, use materialized view (FAST!)
+            if not date_from and not date_to:
+                query = """
+                    SELECT
+                        total_trips,
+                        total_revenue,
+                        avg_fare,
+                        avg_distance,
+                        avg_duration_min,
+                        date_range_start,
+                        date_range_end
+                    FROM mv_analytics_summary
+                """
+                cursor.execute(query)
+            else:
+                # Use original query with date filters
+                where_conditions = ["total_amount > 0", "dropoff_datetime > pickup_datetime"]
+                params = []
 
-            if date_from:
-                where_conditions.append("pickup_datetime >= %s")
-                params.append(date_from)
+                if date_from:
+                    where_conditions.append("pickup_datetime >= %s")
+                    params.append(date_from)
 
-            if date_to:
-                where_conditions.append("pickup_datetime <= %s")
-                params.append(date_to)
+                if date_to:
+                    where_conditions.append("pickup_datetime <= %s")
+                    params.append(date_to)
 
-            where_clause = "WHERE " + " AND ".join(where_conditions)
+                where_clause = "WHERE " + " AND ".join(where_conditions)
 
-            query = f"""
-                SELECT
-                    COUNT(*) as total_trips,
-                    SUM(total_amount) as total_revenue,
-                    AVG(total_amount) as avg_fare,
-                    AVG(trip_distance) as avg_distance,
-                    AVG(EXTRACT(EPOCH FROM (dropoff_datetime - pickup_datetime))/60) as avg_duration_min,
-                    MIN(pickup_datetime) as date_range_start,
-                    MAX(pickup_datetime) as date_range_end
-                FROM rides
-                {where_clause}
-            """
+                query = f"""
+                    SELECT
+                        COUNT(*) as total_trips,
+                        SUM(total_amount) as total_revenue,
+                        AVG(total_amount) as avg_fare,
+                        AVG(trip_distance) as avg_distance,
+                        AVG(EXTRACT(EPOCH FROM (dropoff_datetime - pickup_datetime))/60) as avg_duration_min,
+                        MIN(pickup_datetime) as date_range_start,
+                        MAX(pickup_datetime) as date_range_end
+                    FROM rides
+                    {where_clause}
+                """
 
-            cursor.execute(query, params)
+                cursor.execute(query, params)
+
             columns = [desc[0] for desc in cursor.description]
             result = dict(zip(columns, cursor.fetchone()))
 
             cursor.close()
-            conn.close()
 
             return result
 
         except Exception as e:
             logger.error(f"Error fetching analytics summary: {e}")
             raise
+        finally:
+            if conn:
+                self.config.return_connection(conn)
 
     def get_hourly_stats(self, limit: int = 100) -> List[Dict[str, Any]]:
         """Get hourly statistics from materialized view."""
+        conn = None
         try:
             conn = self.config.get_connection()
             cursor = conn.cursor()
@@ -251,16 +280,19 @@ class DatabaseService:
             results = [dict(zip(columns, row)) for row in cursor.fetchall()]
 
             cursor.close()
-            conn.close()
 
             return results
 
         except Exception as e:
             logger.error(f"Error fetching hourly stats: {e}")
             raise
+        finally:
+            if conn:
+                self.config.return_connection(conn)
 
     def get_top_pickup_locations(self, limit: int = 20) -> List[Dict[str, Any]]:
         """Get top pickup locations from materialized view."""
+        conn = None
         try:
             conn = self.config.get_connection()
             cursor = conn.cursor()
@@ -280,16 +312,19 @@ class DatabaseService:
             results = [dict(zip(columns, row)) for row in cursor.fetchall()]
 
             cursor.close()
-            conn.close()
 
             return results
 
         except Exception as e:
             logger.error(f"Error fetching top pickup locations: {e}")
             raise
+        finally:
+            if conn:
+                self.config.return_connection(conn)
 
     def get_top_dropoff_locations(self, limit: int = 20) -> List[Dict[str, Any]]:
         """Get top dropoff locations from materialized view."""
+        conn = None
         try:
             conn = self.config.get_connection()
             cursor = conn.cursor()
@@ -309,16 +344,19 @@ class DatabaseService:
             results = [dict(zip(columns, row)) for row in cursor.fetchall()]
 
             cursor.close()
-            conn.close()
 
             return results
 
         except Exception as e:
             logger.error(f"Error fetching top dropoff locations: {e}")
             raise
+        finally:
+            if conn:
+                self.config.return_connection(conn)
 
     def get_vendor_performance(self, limit: int = 30) -> List[Dict[str, Any]]:
         """Get vendor daily performance from materialized view."""
+        conn = None
         try:
             conn = self.config.get_connection()
             cursor = conn.cursor()
@@ -337,16 +375,19 @@ class DatabaseService:
             results = [dict(zip(columns, row)) for row in cursor.fetchall()]
 
             cursor.close()
-            conn.close()
 
             return results
 
         except Exception as e:
             logger.error(f"Error fetching vendor performance: {e}")
             raise
+        finally:
+            if conn:
+                self.config.return_connection(conn)
 
     def get_payment_hourly_stats(self) -> List[Dict[str, Any]]:
         """Get payment type hourly statistics from materialized view."""
+        conn = None
         try:
             conn = self.config.get_connection()
             cursor = conn.cursor()
@@ -364,16 +405,19 @@ class DatabaseService:
             results = [dict(zip(columns, row)) for row in cursor.fetchall()]
 
             cursor.close()
-            conn.close()
 
             return results
 
         except Exception as e:
             logger.error(f"Error fetching payment hourly stats: {e}")
             raise
+        finally:
+            if conn:
+                self.config.return_connection(conn)
 
     def get_distance_segments(self) -> List[Dict[str, Any]]:
         """Get distance segment statistics from materialized view."""
+        conn = None
         try:
             conn = self.config.get_connection()
             cursor = conn.cursor()
@@ -398,16 +442,19 @@ class DatabaseService:
             results = [dict(zip(columns, row)) for row in cursor.fetchall()]
 
             cursor.close()
-            conn.close()
 
             return results
 
         except Exception as e:
             logger.error(f"Error fetching distance segments: {e}")
             raise
+        finally:
+            if conn:
+                self.config.return_connection(conn)
 
     def get_time_patterns(self, limit: int = 168) -> List[Dict[str, Any]]:
         """Get time patterns from materialized view."""
+        conn = None
         try:
             conn = self.config.get_connection()
             cursor = conn.cursor()
@@ -426,16 +473,19 @@ class DatabaseService:
             results = [dict(zip(columns, row)) for row in cursor.fetchall()]
 
             cursor.close()
-            conn.close()
 
             return results
 
         except Exception as e:
             logger.error(f"Error fetching time patterns: {e}")
             raise
+        finally:
+            if conn:
+                self.config.return_connection(conn)
 
     def get_popular_routes(self, limit: int = 20) -> List[Dict[str, Any]]:
         """Get popular routes from materialized view."""
+        conn = None
         try:
             conn = self.config.get_connection()
             cursor = conn.cursor()
@@ -456,13 +506,15 @@ class DatabaseService:
             results = [dict(zip(columns, row)) for row in cursor.fetchall()]
 
             cursor.close()
-            conn.close()
 
             return results
 
         except Exception as e:
             logger.error(f"Error fetching popular routes: {e}")
             raise
+        finally:
+            if conn:
+                self.config.return_connection(conn)
 
 
 # Singleton instance

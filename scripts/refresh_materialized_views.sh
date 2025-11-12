@@ -31,6 +31,7 @@ VIEWS=(
     "mv_distance_segments"
     "mv_time_patterns"
     "mv_popular_routes"
+    "mv_analytics_summary"
 )
 
 # Function to refresh a single view
@@ -81,6 +82,12 @@ echo "Successful: $success_count"
 echo "Failed: $fail_count"
 echo "Total time: ${total_duration}s"
 echo ""
+
+# Add benchmarking
+echo "Benchmark Results:" >> /tmp/mv_refresh.log
+echo "Total views: $total_views" >> /tmp/mv_refresh.log
+echo "Total duration: ${total_duration}s" >> /tmp/mv_refresh.log
+echo "Avg per view: $((total_duration / total_views))s" >> /tmp/mv_refresh.log
 
 if [ $fail_count -gt 0 ]; then
     echo "⚠️  Some views failed to refresh"
