@@ -6,7 +6,6 @@ Compares query performance and storage efficiency.
 import sys
 import time
 from pathlib import Path
-from datetime import datetime
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent
@@ -19,6 +18,7 @@ except ImportError:
     sys.exit(1)
 
 from config.database import DatabaseConfig
+
 
 class DuckDBBenchmark:
     """Benchmark DuckDB query performance on Parquet files."""
@@ -34,7 +34,7 @@ class DuckDBBenchmark:
             )
 
         # Create in-memory DuckDB database
-        self.conn = duckdb.connect(database=':memory:', read_only=False)
+        self.conn = duckdb.connect(database=":memory:", read_only=False)
 
         # Register parquet files as views
         print("Loading Parquet files into DuckDB...")
@@ -43,14 +43,18 @@ class DuckDBBenchmark:
         rides_files = list(self.parquet_dir.glob("rides_chunk_*.parquet"))
         if rides_files:
             files_str = "', '".join(str(f) for f in rides_files)
-            self.conn.execute(f"CREATE VIEW rides AS SELECT * FROM read_parquet(['{files_str}']);")
+            self.conn.execute(
+                f"CREATE VIEW rides AS SELECT * FROM read_parquet(['{files_str}']);"
+            )
             print(f"  ✓ Loaded {len(rides_files)} rides chunk(s)")
 
         # Load zones
         zones_file = self.parquet_dir / "zones.parquet"
         if zones_file.exists():
-            self.conn.execute(f"CREATE VIEW zones AS SELECT * FROM read_parquet('{zones_file}');")
-            print(f"  ✓ Loaded zones")
+            self.conn.execute(
+                f"CREATE VIEW zones AS SELECT * FROM read_parquet('{zones_file}');"
+            )
+            print("  ✓ Loaded zones")
 
         print()
 
@@ -70,18 +74,20 @@ class DuckDBBenchmark:
             times.append(duration)
 
         return {
-            'name': name,
-            'min_ms': min(times),
-            'max_ms': max(times),
-            'avg_ms': sum(times) / len(times),
-            'rows': len(result) if result else 0
+            "name": name,
+            "min_ms": min(times),
+            "max_ms": max(times),
+            "avg_ms": sum(times) / len(times),
+            "rows": len(result) if result else 0,
         }
 
     def run_analytics_queries(self) -> list:
         """Run standard analytics queries on DuckDB."""
 
         queries = [
-            ("Hourly Stats", """
+            (
+                "Hourly Stats",
+                """
                 SELECT
                     DATE_TRUNC('day', pickup_datetime) as date,
                     EXTRACT(HOUR FROM pickup_datetime) as hour,
@@ -93,9 +99,11 @@ class DuckDBBenchmark:
                 GROUP BY date, hour
                 ORDER BY date DESC, hour
                 LIMIT 100;
-            """),
-
-            ("Top Pickup Locations", """
+            """,
+            ),
+            (
+                "Top Pickup Locations",
+                """
                 SELECT
                     r.pickup_location_id,
                     z.zone,
@@ -107,9 +115,11 @@ class DuckDBBenchmark:
                 GROUP BY r.pickup_location_id, z.zone
                 ORDER BY pickup_count DESC
                 LIMIT 20;
-            """),
-
-            ("Popular Routes", """
+            """,
+            ),
+            (
+                "Popular Routes",
+                """
                 SELECT
                     r.pickup_location_id,
                     r.dropoff_location_id,
@@ -126,9 +136,11 @@ class DuckDBBenchmark:
                 HAVING COUNT(*) >= 10
                 ORDER BY trip_count DESC
                 LIMIT 20;
-            """),
-
-            ("Analytics Summary", """
+            """,
+            ),
+            (
+                "Analytics Summary",
+                """
                 SELECT
                     COUNT(*) as total_trips,
                     ROUND(SUM(total_amount), 2) as total_revenue,
@@ -136,9 +148,11 @@ class DuckDBBenchmark:
                     ROUND(AVG(trip_distance), 2) as avg_distance
                 FROM rides
                 WHERE total_amount > 0;
-            """),
-
-            ("Time Patterns", """
+            """,
+            ),
+            (
+                "Time Patterns",
+                """
                 SELECT
                     EXTRACT(DOW FROM pickup_datetime) as day_of_week,
                     EXTRACT(HOUR FROM pickup_datetime) as hour,
@@ -148,20 +162,23 @@ class DuckDBBenchmark:
                 WHERE total_amount > 0
                 GROUP BY day_of_week, hour
                 ORDER BY day_of_week, hour;
-            """),
+            """,
+            ),
         ]
 
         results = []
-        print("="*70)
+        print("=" * 70)
         print("DUCKDB QUERY PERFORMANCE (on Parquet files)")
-        print("="*70)
+        print("=" * 70)
 
         for name, query in queries:
             result = self.benchmark_query(name, query)
             results.append(result)
-            print(f"{result['name']:35} {result['avg_ms']:8.2f}ms  ({result['rows']} rows)")
+            print(
+                f"{result['name']:35} {result['avg_ms']:8.2f}ms  ({result['rows']} rows)"
+            )
 
-        print("="*70)
+        print("=" * 70)
         print()
 
         return results
@@ -175,11 +192,23 @@ def benchmark_postgresql(db):
     """Benchmark PostgreSQL materialized views for comparison."""
 
     queries = [
-        ("Hourly Stats (MV)", "SELECT * FROM mv_hourly_stats ORDER BY date DESC LIMIT 100;"),
-        ("Top Pickup Locations (MV)", "SELECT * FROM mv_top_pickup_locations ORDER BY pickup_count DESC LIMIT 20;"),
-        ("Popular Routes (MV)", "SELECT * FROM mv_popular_routes ORDER BY trip_count DESC LIMIT 20;"),
+        (
+            "Hourly Stats (MV)",
+            "SELECT * FROM mv_hourly_stats ORDER BY date DESC LIMIT 100;",
+        ),
+        (
+            "Top Pickup Locations (MV)",
+            "SELECT * FROM mv_top_pickup_locations ORDER BY pickup_count DESC LIMIT 20;",
+        ),
+        (
+            "Popular Routes (MV)",
+            "SELECT * FROM mv_popular_routes ORDER BY trip_count DESC LIMIT 20;",
+        ),
         ("Analytics Summary (MV)", "SELECT * FROM mv_analytics_summary;"),
-        ("Time Patterns (MV)", "SELECT * FROM mv_time_patterns ORDER BY day_of_week, hour;"),
+        (
+            "Time Patterns (MV)",
+            "SELECT * FROM mv_time_patterns ORDER BY day_of_week, hour;",
+        ),
     ]
 
     conn = db.get_connection()
@@ -187,9 +216,9 @@ def benchmark_postgresql(db):
         cursor = conn.cursor()
         results = []
 
-        print("="*70)
+        print("=" * 70)
         print("POSTGRESQL MATERIALIZED VIEW PERFORMANCE")
-        print("="*70)
+        print("=" * 70)
 
         for name, query in queries:
             times = []
@@ -204,14 +233,10 @@ def benchmark_postgresql(db):
                 rows = len(result)
 
             avg_time = sum(times) / len(times)
-            results.append({
-                'name': name,
-                'avg_ms': avg_time,
-                'rows': rows
-            })
+            results.append({"name": name, "avg_ms": avg_time, "rows": rows})
             print(f"{name:35} {avg_time:8.2f}ms  ({rows} rows)")
 
-        print("="*70)
+        print("=" * 70)
         print()
 
         cursor.close()
@@ -248,13 +273,13 @@ def compare_storage_size(parquet_dir: str):
         else:
             parquet_size_mb = 0
 
-        print("="*70)
+        print("=" * 70)
         print("STORAGE COMPARISON")
-        print("="*70)
+        print("=" * 70)
         print(f"PostgreSQL rides table:        {pg_rides_size}")
         print(f"PostgreSQL materialized views: {pg_mv_size}")
         print(f"Parquet files:                 {parquet_size_mb:.2f} MB")
-        print("="*70)
+        print("=" * 70)
         print()
 
         cursor.close()
@@ -304,28 +329,30 @@ def main():
         compare_storage_size(parquet_dir)
 
         # Summary comparison
-        print("="*70)
+        print("=" * 70)
         print("PERFORMANCE COMPARISON SUMMARY")
-        print("="*70)
+        print("=" * 70)
         print(f"{'Query Type':<35} {'DuckDB':>12} {'PostgreSQL':>12} {'Winner':>10}")
-        print("-"*70)
+        print("-" * 70)
 
         for duck, pg in zip(duckdb_results, pg_results):
-            duck_time = duck['avg_ms']
-            pg_time = pg['avg_ms']
+            duck_time = duck["avg_ms"]
+            pg_time = pg["avg_ms"]
             winner = "DuckDB" if duck_time < pg_time else "PostgreSQL"
             speedup = max(duck_time, pg_time) / min(duck_time, pg_time)
 
-            print(f"{duck['name']:<35} {duck_time:>10.2f}ms {pg_time:>10.2f}ms {winner:>10} ({speedup:.1f}x)")
+            print(
+                f"{duck['name']:<35} {duck_time:>10.2f}ms {pg_time:>10.2f}ms {winner:>10} ({speedup:.1f}x)"
+            )
 
-        print("="*70)
+        print("=" * 70)
 
         # Overall winner
-        duck_avg = sum(r['avg_ms'] for r in duckdb_results) / len(duckdb_results)
-        pg_avg = sum(r['avg_ms'] for r in pg_results) / len(pg_results)
+        duck_avg = sum(r["avg_ms"] for r in duckdb_results) / len(duckdb_results)
+        pg_avg = sum(r["avg_ms"] for r in pg_results) / len(pg_results)
 
         print()
-        print(f"Average Query Time:")
+        print("Average Query Time:")
         print(f"  DuckDB (Parquet):            {duck_avg:.2f}ms")
         print(f"  PostgreSQL (Materialized):   {pg_avg:.2f}ms")
 
@@ -340,7 +367,9 @@ def main():
         print("💡 Recommendations:")
         if duck_avg < pg_avg:
             print("  • DuckDB + Parquet is faster for analytical queries")
-            print("  • Consider hybrid approach: PostgreSQL for OLTP, DuckDB for analytics")
+            print(
+                "  • Consider hybrid approach: PostgreSQL for OLTP, DuckDB for analytics"
+            )
             print("  • Parquet storage is more compact and faster to scan")
         else:
             print("  • PostgreSQL materialized views are faster (pre-computed)")
@@ -352,6 +381,7 @@ def main():
     except Exception as e:
         print(f"❌ Error: {e}")
         raise
+
 
 if __name__ == "__main__":
     main()

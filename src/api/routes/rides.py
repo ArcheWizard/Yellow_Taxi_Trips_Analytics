@@ -6,9 +6,11 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
+
+from fastapi import APIRouter, HTTPException, Query
+
 from src.api.models import PaginationMetadata, Ride, RideListResponse
 from src.api.services.database import db_service
-from fastapi import APIRouter, HTTPException, Query
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent.parent

@@ -4,15 +4,16 @@ Processes each file completely (no sampling).
 """
 
 import sys
-from pathlib import Path
 import time
+from pathlib import Path
 
 # Add project root to path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.etl.load_data import TaxiDataLoader
 from config.database import DatabaseConfig
+from src.etl.load_data import TaxiDataLoader
+
 
 def get_current_row_count(db):
     """Get current row count in rides table."""
@@ -25,6 +26,7 @@ def get_current_row_count(db):
         return count
     finally:
         db.return_connection(conn)
+
 
 def main():
     print("""
@@ -55,9 +57,9 @@ def main():
         size_mb = f.stat().st_size / (1024**2)
         print(f"  - {f.name} ({size_mb:.1f} MB)")
 
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("Starting data load...")
-    print("="*70 + "\n")
+    print("=" * 70 + "\n")
 
     total_start = time.time()
     loaded_count = 0
@@ -93,14 +95,14 @@ def main():
     total_duration = time.time() - total_start
     final_count = get_current_row_count(db)
 
-    print("="*70)
+    print("=" * 70)
     print("LOAD COMPLETE")
-    print("="*70)
+    print("=" * 70)
     print(f"Initial rows:    {initial_count:,}")
     print(f"Rows loaded:     {loaded_count:,}")
     print(f"Final rows:      {final_count:,}")
-    print(f"Total time:      {total_duration/60:.1f} minutes")
-    print("="*70)
+    print(f"Total time:      {total_duration / 60:.1f} minutes")
+    print("=" * 70)
 
     # Refresh materialized views
     print("\nRefreshing materialized views...")
@@ -116,6 +118,7 @@ def main():
         print(f"⚠️  Failed to refresh views: {e}")
 
     print("\n✓ All data loaded successfully!")
+
 
 if __name__ == "__main__":
     main()

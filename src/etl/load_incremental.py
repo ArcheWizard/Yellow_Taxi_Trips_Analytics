@@ -3,25 +3,23 @@ Incremental data loading with benchmarking at 500K, 1M, and 3M row milestones.
 Loads data month by month and runs comprehensive benchmarks at each target.
 """
 
+import json
 import sys
 import time
-import json
-from pathlib import Path
 from datetime import datetime
-import pandas as pd
+from pathlib import Path
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 from config.database import DatabaseConfig
-from src.etl.load_data import TaxiDataLoader
-from src.analytics.benchmark_materialized_views import MaterializedViewBenchmark
 from src.analytics.benchmark_incremental_refresh import (
-    benchmark_full_refresh,
-    benchmark_incremental_refresh,
-    get_data_stats
-)
+    benchmark_full_refresh, benchmark_incremental_refresh, get_data_stats)
+from src.analytics.benchmark_materialized_views import \
+    MaterializedViewBenchmark
+from src.etl.load_data import TaxiDataLoader
+
 
 class IncrementalLoader:
     """Load data incrementally with benchmarking at milestones."""
@@ -65,11 +63,11 @@ class IncrementalLoader:
 
     def load_until_milestone(self, target_rows: int):
         """Load data until we reach the target milestone."""
-        print(f"\n{'='*70}")
+        print(f"\n{'=' * 70}")
         print(f"Loading data to reach {target_rows:,} rows...")
         print(f"Current: {self.current_rows:,} rows")
         print(f"Need: {target_rows - self.current_rows:,} more rows")
-        print(f"{'='*70}\n")
+        print(f"{'=' * 70}\n")
 
         files = self.get_parquet_files()
 
@@ -115,9 +113,9 @@ class IncrementalLoader:
 
     def run_benchmarks(self, milestone: int):
         """Run comprehensive benchmarks at current scale."""
-        print(f"\n{'='*70}")
+        print(f"\n{'=' * 70}")
         print(f"BENCHMARKING AT {self.current_rows:,} ROWS")
-        print(f"{'='*70}\n")
+        print(f"{'=' * 70}\n")
 
         # 1. Materialized view benchmarks
         print("Phase 1: Materialized View Performance...")
@@ -129,12 +127,12 @@ class IncrementalLoader:
         # Combine results
         results = {
             **mv_results,
-            'query_performance': query_results,
-            'raw_query_performance': raw_query_results
+            "query_performance": query_results,
+            "raw_query_performance": raw_query_results,
         }
 
         # Save results
-        filename = f"benchmark_{milestone//1000}K_rows_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        filename = f"benchmark_{milestone // 1000}K_rows_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
         filepath = mv_benchmark.save_results(results, filename)
 
         # Generate summary
@@ -145,10 +143,10 @@ class IncrementalLoader:
 
         # Get data distribution
         stats = get_data_stats(self.db)
-        print(f"\nData Distribution:")
+        print("\nData Distribution:")
         print(f"  Total: {stats['total_rows']:,} rows")
         print(f"  Hot (30d): {stats['hot_rows']:,} rows ({stats['hot_pct']:.1f}%)")
-        print(f"  Cold: {stats['cold_rows']:,} rows ({100-stats['hot_pct']:.1f}%)")
+        print(f"  Cold: {stats['cold_rows']:,} rows ({100 - stats['hot_pct']:.1f}%)")
 
         # Benchmark refresh strategies
         full_time = benchmark_full_refresh(self.db)
@@ -156,31 +154,33 @@ class IncrementalLoader:
 
         speedup = full_time / hot_time if hot_time > 0 else 1
 
-        print(f"\n{'='*70}")
+        print(f"\n{'=' * 70}")
         print("INCREMENTAL REFRESH SUMMARY")
-        print(f"{'='*70}")
+        print(f"{'=' * 70}")
         print(f"Full Refresh:    {full_time:.3f}s")
         print(f"Hot Refresh:     {hot_time:.3f}s")
         print(f"Speedup:         {speedup:.1f}x faster")
-        print(f"{'='*70}\n")
+        print(f"{'=' * 70}\n")
 
         return {
-            'milestone': milestone,
-            'row_count': self.current_rows,
-            'mv_refresh_time': mv_results['total_refresh_time'],
-            'full_refresh_time': full_time,
-            'hot_refresh_time': hot_time,
-            'speedup_factor': speedup,
-            'query_avg_ms': sum(q['duration_ms'] for q in query_results) / len(query_results),
-            'raw_query_avg_ms': sum(q['duration_ms'] for q in raw_query_results) / len(raw_query_results),
-            'benchmark_file': str(filepath)
+            "milestone": milestone,
+            "row_count": self.current_rows,
+            "mv_refresh_time": mv_results["total_refresh_time"],
+            "full_refresh_time": full_time,
+            "hot_refresh_time": hot_time,
+            "speedup_factor": speedup,
+            "query_avg_ms": sum(q["duration_ms"] for q in query_results)
+            / len(query_results),
+            "raw_query_avg_ms": sum(q["duration_ms"] for q in raw_query_results)
+            / len(raw_query_results),
+            "benchmark_file": str(filepath),
         }
 
     def refresh_materialized_views(self):
         """Refresh all materialized views after loading."""
-        print(f"\n{'='*70}")
+        print(f"\n{'=' * 70}")
         print("Refreshing Materialized Views...")
-        print(f"{'='*70}\n")
+        print(f"{'=' * 70}\n")
 
         conn = self.db.get_connection()
         try:
@@ -197,20 +197,22 @@ class IncrementalLoader:
 
                 # Fallback to standard refresh
                 standard_views = [
-                    'mv_hourly_stats',
-                    'mv_top_pickup_locations',
-                    'mv_top_dropoff_locations',
-                    'mv_vendor_daily_performance',
-                    'mv_payment_hourly',
-                    'mv_distance_segments',
-                    'mv_time_patterns',
-                    'mv_popular_routes',
-                    'mv_analytics_summary'
+                    "mv_hourly_stats",
+                    "mv_top_pickup_locations",
+                    "mv_top_dropoff_locations",
+                    "mv_vendor_daily_performance",
+                    "mv_payment_hourly",
+                    "mv_distance_segments",
+                    "mv_time_patterns",
+                    "mv_popular_routes",
+                    "mv_analytics_summary",
                 ]
 
                 for view in standard_views:
                     try:
-                        cursor.execute(f"REFRESH MATERIALIZED VIEW CONCURRENTLY {view};")
+                        cursor.execute(
+                            f"REFRESH MATERIALIZED VIEW CONCURRENTLY {view};"
+                        )
                         conn.commit()
                         print(f"  ✓ {view}")
                     except Exception as ve:
@@ -227,13 +229,15 @@ class IncrementalLoader:
 
         for milestone in self.MILESTONES:
             if self.current_rows >= milestone:
-                print(f"\n✓ Milestone {milestone:,} already reached ({self.current_rows:,} rows)")
+                print(
+                    f"\n✓ Milestone {milestone:,} already reached ({self.current_rows:,} rows)"
+                )
                 continue
 
             # Load data to milestone
-            print(f"\n\n{'#'*70}")
+            print(f"\n\n{'#' * 70}")
             print(f"# MILESTONE: {milestone:,} ROWS")
-            print(f"{'#'*70}\n")
+            print(f"{'#' * 70}\n")
 
             success = self.load_until_milestone(milestone)
 
@@ -250,35 +254,43 @@ class IncrementalLoader:
             results_summary.append(benchmark_results)
 
             # Summary
-            print(f"\n{'='*70}")
+            print(f"\n{'=' * 70}")
             print(f"MILESTONE {milestone:,} COMPLETE")
-            print(f"{'='*70}")
+            print(f"{'=' * 70}")
             print(f"Actual rows: {self.current_rows:,}")
             print(f"MV refresh: {benchmark_results['mv_refresh_time']:.2f}s")
-            print(f"Hot refresh: {benchmark_results['hot_refresh_time']:.3f}s ({benchmark_results['speedup_factor']:.1f}x speedup)")
+            print(
+                f"Hot refresh: {benchmark_results['hot_refresh_time']:.3f}s ({benchmark_results['speedup_factor']:.1f}x speedup)"
+            )
             print(f"Query avg: {benchmark_results['query_avg_ms']:.2f}ms")
-            print(f"{'='*70}\n")
+            print(f"{'=' * 70}\n")
 
         # Final summary
-        print(f"\n\n{'#'*70}")
+        print(f"\n\n{'#' * 70}")
         print("# SCALING TEST COMPLETE")
-        print(f"{'#'*70}\n")
+        print(f"{'#' * 70}\n")
 
         print("Results Summary:")
-        print(f"{'Milestone':<12} {'Rows':<12} {'MV Refresh':<15} {'Hot Refresh':<15} {'Speedup':<10}")
+        print(
+            f"{'Milestone':<12} {'Rows':<12} {'MV Refresh':<15} {'Hot Refresh':<15} {'Speedup':<10}"
+        )
         print("-" * 70)
 
         for result in results_summary:
-            print(f"{result['milestone']//1000}K rows      "
-                  f"{result['row_count']:>10,}  "
-                  f"{result['mv_refresh_time']:>12.2f}s  "
-                  f"{result['hot_refresh_time']:>12.3f}s  "
-                  f"{result['speedup_factor']:>8.1f}x")
+            print(
+                f"{result['milestone'] // 1000}K rows      "
+                f"{result['row_count']:>10,}  "
+                f"{result['mv_refresh_time']:>12.2f}s  "
+                f"{result['hot_refresh_time']:>12.3f}s  "
+                f"{result['speedup_factor']:>8.1f}x"
+            )
 
         # Save summary
-        summary_file = f"logs/scaling_summary_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        summary_file = (
+            f"logs/scaling_summary_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        )
         Path("logs").mkdir(exist_ok=True)
-        with open(summary_file, 'w') as f:
+        with open(summary_file, "w") as f:
             json.dump(results_summary, f, indent=2)
         print(f"\n✓ Summary saved to: {summary_file}")
 

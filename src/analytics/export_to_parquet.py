@@ -5,7 +5,7 @@ This script extracts the rides table and exports it to columnar Parquet files.
 
 import sys
 from pathlib import Path
-from datetime import datetime
+
 import pandas as pd
 
 # Add project root to path
@@ -13,6 +13,7 @@ project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 from config.database import DatabaseConfig
+
 
 def export_rides_to_parquet(output_dir: str = "data/parquet"):
     """Export rides table to Parquet format."""
@@ -55,7 +56,9 @@ def export_rides_to_parquet(output_dir: str = "data/parquet"):
 
         while offset < total_rows:
             chunk_num += 1
-            print(f"Chunk {chunk_num}: Rows {offset:,} to {min(offset + chunk_size, total_rows):,}...")
+            print(
+                f"Chunk {chunk_num}: Rows {offset:,} to {min(offset + chunk_size, total_rows):,}..."
+            )
 
             # Fetch chunk
             query = f"""
@@ -76,10 +79,7 @@ def export_rides_to_parquet(output_dir: str = "data/parquet"):
             # Save as Parquet
             output_file = output_path / f"rides_chunk_{chunk_num:03d}.parquet"
             df.to_parquet(
-                output_file,
-                engine='pyarrow',
-                compression='snappy',
-                index=False
+                output_file, engine="pyarrow", compression="snappy", index=False
             )
 
             print(f"  ✓ Saved {len(rows):,} rows to {output_file.name}")
@@ -92,13 +92,15 @@ def export_rides_to_parquet(output_dir: str = "data/parquet"):
         print("\nExporting zones table...")
         zones_df = pd.read_sql("SELECT * FROM zones;", conn)
         zones_file = output_path / "zones.parquet"
-        zones_df.to_parquet(zones_file, engine='pyarrow', compression='snappy', index=False)
+        zones_df.to_parquet(
+            zones_file, engine="pyarrow", compression="snappy", index=False
+        )
         print(f"  ✓ Saved {len(zones_df)} zones to {zones_file.name}")
 
         # Summary
-        print("\n" + "="*70)
+        print("\n" + "=" * 70)
         print("EXPORT COMPLETE")
-        print("="*70)
+        print("=" * 70)
         print(f"Output directory: {output_path.absolute()}")
         print(f"Total files: {chunk_num + 1}")
         print(f"Total rows exported: {total_rows:,}")
@@ -106,10 +108,11 @@ def export_rides_to_parquet(output_dir: str = "data/parquet"):
         # Get total size
         total_size = sum(f.stat().st_size for f in output_path.glob("*.parquet"))
         print(f"Total size: {total_size / (1024**2):.2f} MB")
-        print("="*70)
+        print("=" * 70)
 
     finally:
         db.return_connection(conn)
+
 
 if __name__ == "__main__":
     export_rides_to_parquet()

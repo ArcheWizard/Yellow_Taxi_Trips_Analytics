@@ -5,9 +5,11 @@ Health check endpoints for API status monitoring.
 import sys
 from datetime import datetime
 from pathlib import Path
+
+from fastapi import APIRouter, HTTPException
+
 from src.api.models import HealthCheck, WelcomeMessage
 from src.api.services.database import db_service
-from fastapi import APIRouter, HTTPException
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent.parent

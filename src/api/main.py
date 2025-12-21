@@ -9,10 +9,12 @@ import sys
 import time
 from collections import defaultdict
 from pathlib import Path
-from src.api.routes import analytics, health, rides
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+
+from src.api.routes import analytics, health, rides
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent

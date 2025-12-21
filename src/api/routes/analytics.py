@@ -6,18 +6,13 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
-from src.api.models import (
-    AnalyticsSummary,
-    DistanceSegment,
-    HourlyStat,
-    LocationStat,
-    PaymentHourlyStat,
-    PopularRoute,
-    TimePattern,
-    VendorDailyPerformance,
-)
-from src.api.services.database import db_service
+
 from fastapi import APIRouter, HTTPException, Query
+
+from src.api.models import (AnalyticsSummary, DistanceSegment, HourlyStat,
+                            LocationStat, PaymentHourlyStat, PopularRoute,
+                            TimePattern, VendorDailyPerformance)
+from src.api.services.database import db_service
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent.parent

@@ -22,8 +22,7 @@ from config.database import DatabaseConfig
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s"
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -32,15 +31,15 @@ class MaterializedViewBenchmark:
     """Benchmark materialized views at different scales."""
 
     VIEWS = [
-        'mv_hourly_stats',
-        'mv_top_pickup_locations',
-        'mv_top_dropoff_locations',
-        'mv_vendor_daily_performance',
-        'mv_payment_hourly',
-        'mv_distance_segments',
-        'mv_time_patterns',
-        'mv_popular_routes',
-        'mv_analytics_summary'
+        "mv_hourly_stats",
+        "mv_top_pickup_locations",
+        "mv_top_dropoff_locations",
+        "mv_vendor_daily_performance",
+        "mv_payment_hourly",
+        "mv_distance_segments",
+        "mv_time_patterns",
+        "mv_popular_routes",
+        "mv_analytics_summary",
     ]
 
     def __init__(self):
@@ -113,12 +112,12 @@ class MaterializedViewBenchmark:
             cursor.close()
 
             return {
-                'view': view_name,
-                'duration_seconds': round(duration, 3),
-                'size_human': size_after,
-                'size_bytes': bytes_after,
-                'rows': row_count,
-                'concurrent': concurrent
+                "view": view_name,
+                "duration_seconds": round(duration, 3),
+                "size_human": size_after,
+                "size_bytes": bytes_after,
+                "rows": row_count,
+                "concurrent": concurrent,
             }
         finally:
             self.db.return_connection(conn)
@@ -134,15 +133,15 @@ class MaterializedViewBenchmark:
             Dictionary with complete benchmark results
         """
         row_count = self.get_row_count()
-        rides_size, rides_bytes = self.get_table_size('rides')
+        rides_size, rides_bytes = self.get_table_size("rides")
 
-        print(f"\n{'='*70}")
+        print(f"\n{'=' * 70}")
         print(f"Benchmarking Materialized Views at {row_count:,} rows")
-        print(f"{'='*70}")
+        print(f"{'=' * 70}")
         print(f"Timestamp: {datetime.now().isoformat()}")
         print(f"Base table size: {rides_size}")
         print(f"Concurrent refresh: {concurrent}")
-        print(f"{'='*70}\n")
+        print(f"{'=' * 70}\n")
 
         results = []
         total_time = 0
@@ -154,37 +153,37 @@ class MaterializedViewBenchmark:
             try:
                 result = self.benchmark_view_refresh(view, concurrent=concurrent)
                 results.append(result)
-                total_time += result['duration_seconds']
-                total_view_size += result['size_bytes']
+                total_time += result["duration_seconds"]
+                total_view_size += result["size_bytes"]
 
-                print(f"{result['duration_seconds']:6.3f}s  ({result['size_human']:>8s}, {result['rows']:>6,} rows)")
+                print(
+                    f"{result['duration_seconds']:6.3f}s  ({result['size_human']:>8s}, {result['rows']:>6,} rows)"
+                )
 
             except Exception as e:
                 logger.error(f"Error refreshing {view}: {e}")
                 print(f"FAILED: {e}")
-                results.append({
-                    'view': view,
-                    'error': str(e),
-                    'duration_seconds': 0
-                })
+                results.append({"view": view, "error": str(e), "duration_seconds": 0})
 
-        print(f"\n{'='*70}")
+        print(f"\n{'=' * 70}")
         print(f"TOTAL REFRESH TIME: {total_time:.2f} seconds")
         print(f"TOTAL VIEW SIZE:    {self._format_bytes(total_view_size)}")
-        print(f"AVG REFRESH TIME:   {total_time / len(self.VIEWS):.2f} seconds per view")
-        print(f"{'='*70}\n")
+        print(
+            f"AVG REFRESH TIME:   {total_time / len(self.VIEWS):.2f} seconds per view"
+        )
+        print(f"{'=' * 70}\n")
 
         return {
-            'timestamp': datetime.now().isoformat(),
-            'row_count': row_count,
-            'rides_size_bytes': rides_bytes,
-            'rides_size_human': rides_size,
-            'total_refresh_time': round(total_time, 2),
-            'total_view_size_bytes': total_view_size,
-            'total_view_size_human': self._format_bytes(total_view_size),
-            'avg_refresh_time': round(total_time / len(self.VIEWS), 2),
-            'concurrent': concurrent,
-            'views': results
+            "timestamp": datetime.now().isoformat(),
+            "row_count": row_count,
+            "rides_size_bytes": rides_bytes,
+            "rides_size_human": rides_size,
+            "total_refresh_time": round(total_time, 2),
+            "total_view_size_bytes": total_view_size,
+            "total_view_size_human": self._format_bytes(total_view_size),
+            "avg_refresh_time": round(total_time / len(self.VIEWS), 2),
+            "concurrent": concurrent,
+            "views": results,
         }
 
     def benchmark_query_performance(self) -> List[Dict]:
@@ -200,19 +199,34 @@ class MaterializedViewBenchmark:
 
             queries = [
                 ("Hourly Stats (100 rows)", "SELECT * FROM mv_hourly_stats LIMIT 100"),
-                ("Top 20 Pickup Locations", "SELECT * FROM mv_top_pickup_locations LIMIT 20"),
-                ("Top 20 Dropoff Locations", "SELECT * FROM mv_top_dropoff_locations LIMIT 20"),
-                ("Popular Routes (20 routes)", "SELECT * FROM mv_popular_routes LIMIT 20"),
+                (
+                    "Top 20 Pickup Locations",
+                    "SELECT * FROM mv_top_pickup_locations LIMIT 20",
+                ),
+                (
+                    "Top 20 Dropoff Locations",
+                    "SELECT * FROM mv_top_dropoff_locations LIMIT 20",
+                ),
+                (
+                    "Popular Routes (20 routes)",
+                    "SELECT * FROM mv_popular_routes LIMIT 20",
+                ),
                 ("Analytics Summary", "SELECT * FROM mv_analytics_summary"),
-                ("Time Patterns (168 rows)", "SELECT * FROM mv_time_patterns LIMIT 168"),
+                (
+                    "Time Patterns (168 rows)",
+                    "SELECT * FROM mv_time_patterns LIMIT 168",
+                ),
                 ("Distance Segments", "SELECT * FROM mv_distance_segments"),
                 ("Payment Hourly Stats", "SELECT * FROM mv_payment_hourly LIMIT 100"),
-                ("Vendor Performance", "SELECT * FROM mv_vendor_daily_performance LIMIT 30"),
+                (
+                    "Vendor Performance",
+                    "SELECT * FROM mv_vendor_daily_performance LIMIT 30",
+                ),
             ]
 
-            print(f"\n{'='*70}")
+            print(f"\n{'=' * 70}")
             print("Query Performance on Materialized Views")
-            print(f"{'='*70}\n")
+            print(f"{'=' * 70}\n")
 
             results = []
             for query_name, query in queries:
@@ -229,18 +243,22 @@ class MaterializedViewBenchmark:
                 min_time = min(times)
                 max_time = max(times)
 
-                results.append({
-                    'query': query_name,
-                    'duration_ms': round(avg_time, 2),
-                    'min_ms': round(min_time, 2),
-                    'max_ms': round(max_time, 2),
-                    'rows_returned': len(rows)
-                })
+                results.append(
+                    {
+                        "query": query_name,
+                        "duration_ms": round(avg_time, 2),
+                        "min_ms": round(min_time, 2),
+                        "max_ms": round(max_time, 2),
+                        "rows_returned": len(rows),
+                    }
+                )
 
-                print(f"{query_name:40s}: {avg_time:6.2f}ms  (min: {min_time:.2f}ms, max: {max_time:.2f}ms, {len(rows)} rows)")
+                print(
+                    f"{query_name:40s}: {avg_time:6.2f}ms  (min: {min_time:.2f}ms, max: {max_time:.2f}ms, {len(rows)} rows)"
+                )
 
             cursor.close()
-            print(f"\n{'='*70}\n")
+            print(f"\n{'=' * 70}\n")
 
             return results
         finally:
@@ -256,7 +274,9 @@ class MaterializedViewBenchmark:
             cursor = conn.cursor()
 
             queries = [
-                ("Raw: Hourly aggregation", """
+                (
+                    "Raw: Hourly aggregation",
+                    """
                     SELECT
                         DATE(pickup_datetime) as date,
                         EXTRACT(HOUR FROM pickup_datetime)::int as hour,
@@ -265,8 +285,11 @@ class MaterializedViewBenchmark:
                     GROUP BY date, hour
                     ORDER BY date DESC, hour
                     LIMIT 100
-                """),
-                ("Raw: Top pickup locations", """
+                """,
+                ),
+                (
+                    "Raw: Top pickup locations",
+                    """
                     SELECT
                         pickup_location_id,
                         COUNT(*) as pickup_count
@@ -274,8 +297,11 @@ class MaterializedViewBenchmark:
                     GROUP BY pickup_location_id
                     ORDER BY pickup_count DESC
                     LIMIT 20
-                """),
-                ("Raw: Popular routes", """
+                """,
+                ),
+                (
+                    "Raw: Popular routes",
+                    """
                     SELECT
                         pickup_location_id,
                         dropoff_location_id,
@@ -285,12 +311,13 @@ class MaterializedViewBenchmark:
                     GROUP BY pickup_location_id, dropoff_location_id
                     ORDER BY trip_count DESC
                     LIMIT 20
-                """),
+                """,
+                ),
             ]
 
-            print(f"\n{'='*70}")
+            print(f"\n{'=' * 70}")
             print("Raw Table Query Performance (without materialized views)")
-            print(f"{'='*70}\n")
+            print(f"{'=' * 70}\n")
 
             results = []
             for query_name, query in queries:
@@ -299,16 +326,18 @@ class MaterializedViewBenchmark:
                 rows = cursor.fetchall()
                 duration = (time.time() - start) * 1000  # Convert to ms
 
-                results.append({
-                    'query': query_name,
-                    'duration_ms': round(duration, 2),
-                    'rows_returned': len(rows)
-                })
+                results.append(
+                    {
+                        "query": query_name,
+                        "duration_ms": round(duration, 2),
+                        "rows_returned": len(rows),
+                    }
+                )
 
                 print(f"{query_name:40s}: {duration:6.2f}ms ({len(rows)} rows)")
 
             cursor.close()
-            print(f"\n{'='*70}\n")
+            print(f"\n{'=' * 70}\n")
 
             return results
         finally:
@@ -336,7 +365,7 @@ class MaterializedViewBenchmark:
         if filepath.is_dir():
             raise ValueError(f"Expected file path but got directory: {filepath}")
 
-        with open(str(filepath), 'w') as f:
+        with open(str(filepath), "w") as f:
             json.dump(results, f, indent=2)
 
         logger.info(f"Results saved to: {filepath}")
@@ -347,7 +376,7 @@ class MaterializedViewBenchmark:
     @staticmethod
     def _format_bytes(bytes_size: float) -> str:
         """Format bytes to human-readable size."""
-        for unit in ['B', 'KB', 'MB', 'GB']:
+        for unit in ["B", "KB", "MB", "GB"]:
             if bytes_size < 1024.0:
                 return f"{bytes_size:.2f} {unit}"
             bytes_size /= 1024.0
@@ -355,36 +384,52 @@ class MaterializedViewBenchmark:
 
     def generate_summary_report(self, results: Dict):
         """Generate a human-readable summary report."""
-        print(f"\n{'='*70}")
+        print(f"\n{'=' * 70}")
         print("BENCHMARK SUMMARY")
-        print(f"{'='*70}")
-        print(f"Dataset Size:           {results['row_count']:,} rows ({results['rides_size_human']})")
+        print(f"{'=' * 70}")
+        print(
+            f"Dataset Size:           {results['row_count']:,} rows ({results['rides_size_human']})"
+        )
         print(f"Total Views:            {len(results['views'])} materialized views")
         print(f"Total View Size:        {results['total_view_size_human']}")
         print(f"Total Refresh Time:     {results['total_refresh_time']:.2f} seconds")
-        print(f"Average Refresh Time:   {results['avg_refresh_time']:.2f} seconds per view")
+        print(
+            f"Average Refresh Time:   {results['avg_refresh_time']:.2f} seconds per view"
+        )
 
-        if 'query_performance' in results:
-            avg_query_time = statistics.mean([q['duration_ms'] for q in results['query_performance']])
+        if "query_performance" in results:
+            avg_query_time = statistics.mean(
+                [q["duration_ms"] for q in results["query_performance"]]
+            )
             print(f"Avg Query Time (MV):    {avg_query_time:.2f}ms")
 
-        if 'raw_query_performance' in results:
-            avg_raw_time = statistics.mean([q['duration_ms'] for q in results['raw_query_performance']])
+        if "raw_query_performance" in results:
+            avg_raw_time = statistics.mean(
+                [q["duration_ms"] for q in results["raw_query_performance"]]
+            )
             print(f"Avg Query Time (Raw):   {avg_raw_time:.2f}ms")
 
-            if 'query_performance' in results:
-                mv_avg = statistics.mean([q['duration_ms'] for q in results['query_performance']])
+            if "query_performance" in results:
+                mv_avg = statistics.mean(
+                    [q["duration_ms"] for q in results["query_performance"]]
+                )
                 speedup = avg_raw_time / mv_avg
-                print(f"Speedup Factor:         {speedup:.1f}x faster with materialized views")
+                print(
+                    f"Speedup Factor:         {speedup:.1f}x faster with materialized views"
+                )
 
-        print(f"{'='*70}\n")
+        print(f"{'=' * 70}\n")
 
         # Identify slowest views
         print("Slowest Materialized Views:")
-        sorted_views = sorted(results['views'], key=lambda x: x.get('duration_seconds', 0), reverse=True)
+        sorted_views = sorted(
+            results["views"], key=lambda x: x.get("duration_seconds", 0), reverse=True
+        )
         for i, view in enumerate(sorted_views[:3], 1):
-            if 'error' not in view:
-                print(f"  {i}. {view['view']:35s} {view['duration_seconds']:6.3f}s ({view['size_human']})")
+            if "error" not in view:
+                print(
+                    f"  {i}. {view['view']:35s} {view['duration_seconds']:6.3f}s ({view['size_human']})"
+                )
 
         print()
 
@@ -423,8 +468,8 @@ def main():
         # Combine results
         results = {
             **refresh_results,
-            'query_performance': query_results,
-            'raw_query_performance': raw_query_results
+            "query_performance": query_results,
+            "raw_query_performance": raw_query_results,
         }
 
         # Save results
