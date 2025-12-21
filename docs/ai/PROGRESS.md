@@ -73,26 +73,20 @@
 
 ### Database Statistics
 
-- **Total Rides Loaded:** 93,171
+- **Total Rides Loaded:** 17,417,027 (17.4M trips)
 - **Total Vendors:** 2 (Creative Mobile Technologies, VeriFone Inc.)
 - **Total Zones:** 265 (across 5 boroughs + airports)
-- **Date Range:** September 2025
-- **Database Size:** ~50MB
+- **Date Range:** July-November 2025 (5 months)
+- **Database Size:** ~8.5 GB
+- **Materialized Views:** 9 core views + 6 incremental (hot/cold) views
 
-### Data Quality Metrics
+### Performance Metrics
 
-- **Average Trip Distance:** 4.59 miles
-- **Average Fare:** $33.26
-- **Vendor Distribution:**
-  - VeriFone Inc.: 71,812 trips (77%)
-  - Creative Mobile Technologies: 21,359 trips (23%)
-
-### Top Insights
-
-- **Busiest Hour:** 11 AM (7,944 trips)
-- **Slowest Hour:** 3 AM (659 trips)
-- **Top Pickup Location:** JFK Airport (9,466 pickups)
-- **Highest Average Fare:** JFK Airport ($78.84)
+- **Query Speedup:** 13,822x faster than raw table queries (0.11ms vs 1,474ms)
+- **Full MV Refresh:** 50.56s (all 9 views at 17.4M rows)
+- **Incremental Hot Refresh:** 5.49s (2.8x faster, refreshes last 30 days only)
+- **API Response Time:** < 10ms P95 latency
+- **Concurrent Refresh:** 100% success rate (was 11% before adding unique indexes)
 
 ---
 

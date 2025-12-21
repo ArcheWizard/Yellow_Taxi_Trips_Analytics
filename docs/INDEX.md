@@ -10,8 +10,6 @@ Navigate to the `human/` folder for user-facing documentation:
 
 ### Getting Started
 
-- **[README.md](human/README.md)** - Project overview, quick start, and
-  architecture
 - **[SETUP.md](human/SETUP.md)** - Detailed installation and configuration guide
 - **[IMPLEMENTATION_GUIDE.md](human/IMPLEMENTATION_GUIDE.md)** - Complete step-by-step
   implementation guide with 25 steps

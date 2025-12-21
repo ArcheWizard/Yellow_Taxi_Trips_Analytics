@@ -62,40 +62,44 @@ Complete documentation is available in the `docs/` folder:
    pip install -r requirements.txt
    ```
 
-3. **Configure database**
+3. **Run interactive setup (recommended)**
 
    ```bash
-   # Copy and edit environment file
+   bash scripts/setup.sh
+   # Choose option 1 for initial setup
+   # Choose option 2 to load full dataset (17.4M rows)
+   ```
+
+   Or manual setup:
+
+4. **Configure database**
+
+   ```bash
    cp .env.example .env
    # Edit .env with your database credentials
    ```
 
-4. **Set up PostgreSQL**
+5. **Set up PostgreSQL**
 
    ```bash
-   sudo -u postgres psql
-   # In psql:
-   CREATE DATABASE city_rides_db;
-   CREATE USER rides_user WITH PASSWORD 'your_password';
-   GRANT ALL PRIVILEGES ON DATABASE city_rides_db TO rides_user;
-   \c city_rides_db
-   GRANT ALL ON SCHEMA public TO rides_user;
-   \q
+   sudo -u postgres psql -f sql/setup_database.sql
    ```
 
-5. **Initialize database schema**
+6. **Initialize database schema**
 
    ```bash
    psql -U rides_user -d city_rides_db -h localhost -f sql/schema.sql
+   psql -U rides_user -d city_rides_db -h localhost -f sql/materialized_views.sql
    ```
 
-6. **Run ETL pipeline**
+7. **Run ETL pipeline**
 
    ```bash
+   python src/etl/load_zones.py
    python src/etl/load_data.py
    ```
 
-7. **Start the API server**
+8. **Start the API server**
 
    ```bash
    cd src/api
@@ -104,7 +108,7 @@ Complete documentation is available in the `docs/` folder:
    # API docs at http://localhost:8000/docs
    ```
 
-8. **(Optional) Start Metabase**
+9. **(Optional) Start Metabase**
 
    ```bash
    docker start metabase
