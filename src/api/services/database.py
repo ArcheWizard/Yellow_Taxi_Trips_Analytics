@@ -260,7 +260,7 @@ class DatabaseService:
                 self.config.return_connection(conn)
 
     def get_hourly_stats(self, limit: int = 100) -> List[Dict[str, Any]]:
-        """Get hourly statistics from materialized view."""
+        """Get hourly statistics from incremental materialized view (hot + cold partitions)."""
         conn = None
         try:
             conn = self.config.get_connection()
@@ -271,7 +271,7 @@ class DatabaseService:
                     date, hour, trip_count, total_revenue,
                     avg_distance, avg_fare, avg_duration_min,
                     credit_card_count, cash_count
-                FROM mv_hourly_stats
+                FROM mv_hourly_stats_incremental
                 ORDER BY date DESC, hour DESC
                 LIMIT %s
             """
@@ -292,7 +292,7 @@ class DatabaseService:
                 self.config.return_connection(conn)
 
     def get_top_pickup_locations(self, limit: int = 20) -> List[Dict[str, Any]]:
-        """Get top pickup locations from materialized view."""
+        """Get top pickup locations from incremental materialized view (hot + cold partitions)."""
         conn = None
         try:
             conn = self.config.get_connection()
@@ -302,7 +302,7 @@ class DatabaseService:
                 SELECT
                     pickup_location_id as location_id, borough, zone, pickup_count as trip_count,
                     avg_distance, avg_fare, total_revenue / NULLIF(pickup_count, 0) as avg_tip, pct_of_total
-                FROM mv_top_pickup_locations
+                FROM mv_top_pickup_locations_incremental
                 WHERE zone IS NOT NULL
                 ORDER BY pickup_count DESC
                 LIMIT %s
@@ -485,7 +485,7 @@ class DatabaseService:
                 self.config.return_connection(conn)
 
     def get_popular_routes(self, limit: int = 20) -> List[Dict[str, Any]]:
-        """Get popular routes from materialized view."""
+        """Get popular routes from incremental materialized view (hot + cold partitions)."""
         conn = None
         try:
             conn = self.config.get_connection()
@@ -496,7 +496,7 @@ class DatabaseService:
                     pickup_location_id, dropoff_location_id,
                     pickup_zone, dropoff_zone, trip_count,
                     avg_fare, avg_distance, avg_duration_min
-                FROM mv_popular_routes
+                FROM mv_popular_routes_incremental
                 WHERE pickup_zone IS NOT NULL AND dropoff_zone IS NOT NULL
                 ORDER BY trip_count DESC
                 LIMIT %s

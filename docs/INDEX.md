@@ -2,8 +2,7 @@
 
 Welcome to the City Rides Analytics Dashboard documentation!
 
-**Project Status:** Phase 3.5 Complete (Performance Optimization) | Phase 4 In Progress
-(Dashboards)
+**Project Status:** Phase 4 In Progress (Visualization & Dashboards) | Phase 5 Planned (Scale & Real-Time Readiness)
 
 ## 📚 For Human Collaborators
 
@@ -42,13 +41,15 @@ Navigate to the `ai/` folder for AI-optimized context:
   reference with query patterns
 - **[PROGRESS.md](ai/PROGRESS.md)** - Detailed project progress and completion
   status
+
+### Phase Implementation Summaries
+
+- **[PHASE1_SUMMARY.md](ai/PHASE1_SUMMARY.md)** - Foundation & setup summary
 - **[PHASE2_SUMMARY.md](ai/PHASE2_SUMMARY.md)** - Advanced analytics implementation
-  summary
-- **[PHASE3_SUMMARY.md](ai/PHASE3_SUMMARY.md)** - FastAPI implementation summary
+- **[PHASE3_SUMMARY.md](ai/PHASE3_SUMMARY.md)** - FastAPI implementation
 - **[PHASE3.5_SUMMARY.md](ai/PHASE3.5_SUMMARY.md)** - Performance optimization
-  summary
-- **[PHASE4_SUMMARY.md](ai/PHASE4_SUMMARY.md)** - Metabase dashboard
-  specifications
+- **[PHASE4_SUMMARY.md](ai/PHASE4_SUMMARY.md)** - Metabase dashboard specifications
+- **[PHASE5_SUMMARY.md](ai/PHASE5_SUMMARY.md)** - Scale & real-time readiness plan 🎯
 
 ## 🎯 Quick Navigation by Task
 
@@ -78,6 +79,10 @@ Navigate to the `ai/` folder for AI-optimized context:
 → See [human/METABASE_SETUP.md](human/METABASE_SETUP.md) and
   [ai/PHASE4_SUMMARY.md](ai/PHASE4_SUMMARY.md)
 
+### "I want to plan for scaling to millions of rows"
+
+→ Read [ai/PHASE5_SUMMARY.md](ai/PHASE5_SUMMARY.md) for comprehensive scaling strategy
+
 ### "I'm an AI helping with this project"
 
 → Read all files in `ai/` folder first, then reference `human/` as needed
@@ -100,10 +105,12 @@ docs/
     ├── DEVELOPMENT_GUIDE.md       # Coding standards
     ├── SCHEMA_REFERENCE.md        # Quick schema reference
     ├── PROGRESS.md                # Project progress tracking
+    ├── PHASE1_SUMMARY.md          # Foundation & setup
     ├── PHASE2_SUMMARY.md          # Analytics phase summary
     ├── PHASE3_SUMMARY.md          # API phase summary
     ├── PHASE3.5_SUMMARY.md        # Performance optimization summary
-    └── PHASE4_SUMMARY.md          # Dashboard phase summary
+    ├── PHASE4_SUMMARY.md          # Dashboard phase summary
+    └── PHASE5_SUMMARY.md          # Scale & real-time readiness plan 🎯
 ```
 
 ## 🔄 Keeping Documentation Updated

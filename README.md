@@ -16,11 +16,12 @@ using real TLC (Taxi & Limousine Commission) data.
 - ✅ High-performance RESTful API with FastAPI (14 endpoints)
 - ✅ Connection pooling for production-ready performance (1,353 req/s)
 - ✅ Performance monitoring with `/metrics` endpoint
-- 🚧 Metabase ready for dashboard creation (Docker container running)
+- 🚧 Metabase dashboards (4 dashboards in progress)
+- 🎯 Phase 5: Scale & Real-Time Readiness (planned)
 
-**Status:** **Phase 3.5 Complete** - API Optimized for Production ✅
+**Status:** **Phase 4 In Progress** - Visualization & Dashboards 🚧
 
-Phases 1-3.5 completed successfully! Phase 4 (Visualization) in progress.
+**Next:** Phase 5 will evaluate scaling strategies, incremental refresh optimization, and DuckDB/Parquet for analytics at scale (3M+ rows).
 
 ## 📚 Documentation
 
@@ -193,6 +194,24 @@ NYC Taxi & Limousine Commission (TLC) - Yellow Taxi Trip Records
 - [x] Schema synced (3 tables + 8 materialized views)
 - [ ] Dashboard creation (4 dashboards planned)
 - [ ] Interactive filters and drill-downs
+
+**Phase 5: Scale & Real-Time Readiness** 🎯 **PLANNED**
+
+**Goal:** Evaluate scaling strategies, optimize for production-scale workloads, and prepare for real-time scenarios.
+
+- [ ] **5.1 Benchmarking** - Test at 500K, 1M, 3M rows to identify breaking points
+- [ ] **5.2 Incremental Refresh** - Implement hot/cold data partitioning (30-day rolling window)
+- [ ] **5.3 DuckDB Evaluation** - Test columnar storage (Parquet) for analytical workloads
+- [ ] **5.4 Hybrid Architecture** - Optional: PostgreSQL (operational) + DuckDB (analytical)
+- [ ] **5.5 Streaming Assessment** - Document real-time readiness (TimescaleDB/Kafka/Arc)
+
+**Expected Outcomes:**
+- 80-90% reduction in materialized view refresh time for large datasets
+- Production-ready scaling strategy for 10M+ rows
+- Decision matrix for columnar storage vs materialized views
+- Comprehensive performance benchmarks and optimization guide
+
+See [docs/ai/PHASE5_SUMMARY.md](docs/ai/PHASE5_SUMMARY.md) for detailed plan.
 
 ## 📝 Usage Examples
 
