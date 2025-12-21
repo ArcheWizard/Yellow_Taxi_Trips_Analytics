@@ -326,9 +326,9 @@ Popular routes table showing the most frequent pickup-dropoff pairs:
 
 Interactive Metabase dashboards for comprehensive data visualization:
 
-![Dashboard Overview](docs/screenshots/Dashboard_1.png)
+![Dashboard Overview](docs/screenshots/Dashboards_1.png)
 
-![Dashboard Analytics](docs/screenshots/Dashboard_2.png)
+![Dashboard Analytics](docs/screenshots/Dashboards_2.png)
 
 ## 🤝 Contributing
 
