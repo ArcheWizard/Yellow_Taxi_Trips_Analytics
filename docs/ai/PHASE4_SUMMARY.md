@@ -175,13 +175,15 @@ LIMIT 5;
 ```sql
 SELECT
     CASE
-        WHEN day_of_week IN (0, 6) THEN 'Weekend'
+        WHEN EXTRACT(DOW FROM pickup_datetime) IN (0, 6) THEN 'Weekend'
         ELSE 'Weekday'
     END as day_type,
     COUNT(*) as trips,
+    ROUND(SUM(total_amount)::numeric, 2) as total_fare,
     ROUND(AVG(total_amount)::numeric, 2) as avg_fare
 FROM rides
-GROUP BY day_type;
+GROUP BY day_type
+ORDER BY day_type DESC;
 ```
 
 **Chart Type:** Comparison cards

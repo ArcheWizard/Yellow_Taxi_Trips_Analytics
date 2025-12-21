@@ -1,56 +1,40 @@
-name: Markdown Format & Lint
+name: Format Markdown
 
 on:
   push:
-    paths:
-      - '**/*.md'
+    branches: [main]
   pull_request:
-    paths:
-      - '**/*.md'
+    branches: [main]
+
+permissions:
+  contents: write  # Required to push commits
 
 jobs:
-  markdown-fix:
-    name: Format & Lint Markdown (auto-fix)
+  format:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          # Use the built-in GITHUB_TOKEN with write permissions
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Install tools
+      - name: Install dependencies
         run: |
-          # Install formatting and linting tools globally
-          npm install -g prettier markdownlint-cli2
+          npm install -g prettier markdownlint-cli
 
-      - name: Format Markdown with Prettier
+      - name: Format files
         run: |
-          # Format all markdown files in the repository
           prettier --write "**/*.md"
+          markdownlint --fix "**/*.md" || true
 
-      - name: Run markdownlint and auto-fix
+      - name: Commit changes
         run: |
-          # Attempt to fix auto-fixable markdownlint issues
-          markdownlint-cli2 "**/*.md" --fix || true
-
-      - name: Commit & push changes (if any)
-        env:
-          GIT_AUTHOR_NAME: github-actions[bot]
-          GIT_AUTHOR_EMAIL: github-actions[bot]@users.noreply.github.com
-        run: |
-          git config user.name "$GIT_AUTHOR_NAME"
-          git config user.email "$GIT_AUTHOR_EMAIL"
-          # Only commit if there are changes
-          if [ -n "$(git status --porcelain)" ]; then
-            git add .
-            git commit -m "chore(docs): auto-format Markdown with Prettier and markdownlint" || echo "No commit created"
-            # Push using the default token provided to actions/checkout
-            git push
-          else
-            echo "No Markdown formatting changes to commit"
-          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore(docs): auto-format Markdown with Prettier and markdownlint" && git push)
