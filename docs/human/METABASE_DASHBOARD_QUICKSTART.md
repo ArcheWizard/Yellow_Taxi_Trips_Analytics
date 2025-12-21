@@ -11,7 +11,7 @@
 - ✅ Metabase running on <http://localhost:3000>
 - ✅ PostgreSQL database connected
 - ✅ 9 materialized views created and refreshed
-- ✅ 93,171 rides loaded
+- ✅ 17,417,027 rides loaded (17.4M trips)
 
 ---
 

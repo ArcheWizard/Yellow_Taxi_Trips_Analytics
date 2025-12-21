@@ -1,28 +1,15 @@
 -- Incremental Materialized View Refresh Strategy
 -- Phase 5.2: Hot/Cold Data Partitioning
--- Created: December 21, 2024
+-- Updated: December 21, 2024
 --
--- Goal: Reduce refresh overhead by only refreshing recent data (last 30 days)
--- Expected benefit: 80-90% reduction in refresh time for large datasets
-
--- ====================
--- CONCEPT: HOT/COLD DATA PARTITIONING
--- ====================
---
--- HOT DATA (Last 30 days):  Refreshed frequently, small dataset
--- COLD DATA (Historical):   Refreshed rarely, large dataset
--- COMBINED VIEW:            Union of hot + cold for queries
---
--- Benefits:
--- - 93K rows:  Minimal benefit (already fast)
--- - 1M rows:   ~30 day window = 90K rows to refresh (10x faster)
--- - 10M rows:  ~30 day window = 300K rows to refresh (33x faster)
+-- IMPORTANT: Hot window is based on LATEST DATA in database, not current date
+-- This allows proper testing with historical datasets
 
 -- ====================
 -- 1. INCREMENTAL HOURLY STATS
 -- ====================
 
--- Cold data: Historical hourly stats (older than 30 days)
+-- Cold data: Historical hourly stats (older than 30 days from latest data)
 CREATE MATERIALIZED VIEW IF NOT EXISTS mv_hourly_stats_cold AS
 SELECT
     DATE(pickup_datetime) as date,
@@ -37,12 +24,12 @@ SELECT
 FROM rides
 WHERE total_amount > 0
 AND dropoff_datetime > pickup_datetime
-AND pickup_datetime < CURRENT_DATE - INTERVAL '30 days'  -- Historical only
+AND pickup_datetime < (SELECT MAX(pickup_datetime) FROM rides) - INTERVAL '30 days'  -- Historical only
 GROUP BY DATE(pickup_datetime), EXTRACT(HOUR FROM pickup_datetime);
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_mv_hourly_stats_cold_unique ON mv_hourly_stats_cold(date, hour);
 
--- Hot data: Recent hourly stats (last 30 days)
+-- Hot data: Recent hourly stats (last 30 days from latest data)
 CREATE MATERIALIZED VIEW IF NOT EXISTS mv_hourly_stats_hot AS
 SELECT
     DATE(pickup_datetime) as date,
@@ -57,7 +44,7 @@ SELECT
 FROM rides
 WHERE total_amount > 0
 AND dropoff_datetime > pickup_datetime
-AND pickup_datetime >= CURRENT_DATE - INTERVAL '30 days'  -- Recent only
+AND pickup_datetime >= (SELECT MAX(pickup_datetime) FROM rides) - INTERVAL '30 days'  -- Recent only (last 30 days of actual data)
 GROUP BY DATE(pickup_datetime), EXTRACT(HOUR FROM pickup_datetime);
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_mv_hourly_stats_hot_unique ON mv_hourly_stats_hot(date, hour);
@@ -92,7 +79,7 @@ FROM rides r
 LEFT JOIN zones z ON r.pickup_location_id = z.location_id
 WHERE r.total_amount > 0
 AND r.dropoff_datetime > r.pickup_datetime
-AND r.pickup_datetime < CURRENT_DATE - INTERVAL '30 days'
+AND r.pickup_datetime < (SELECT MAX(pickup_datetime) FROM rides) - INTERVAL '30 days'
 GROUP BY r.pickup_location_id, z.borough, z.zone;
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_mv_pickup_locations_cold_unique ON mv_top_pickup_locations_cold(pickup_location_id);
@@ -112,7 +99,7 @@ FROM rides r
 LEFT JOIN zones z ON r.pickup_location_id = z.location_id
 WHERE r.total_amount > 0
 AND r.dropoff_datetime > r.pickup_datetime
-AND r.pickup_datetime >= CURRENT_DATE - INTERVAL '30 days'
+AND r.pickup_datetime >= (SELECT MAX(pickup_datetime) FROM rides) - INTERVAL '30 days'
 GROUP BY r.pickup_location_id, z.borough, z.zone;
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_mv_pickup_locations_hot_unique ON mv_top_pickup_locations_hot(pickup_location_id);
@@ -160,7 +147,7 @@ LEFT JOIN zones z_pickup ON r.pickup_location_id = z_pickup.location_id
 LEFT JOIN zones z_dropoff ON r.dropoff_location_id = z_dropoff.location_id
 WHERE r.total_amount > 0
 AND r.dropoff_datetime > r.pickup_datetime
-AND r.pickup_datetime < CURRENT_DATE - INTERVAL '30 days'
+AND r.pickup_datetime < (SELECT MAX(pickup_datetime) FROM rides) - INTERVAL '30 days'
 AND z_pickup.zone IS NOT NULL
 AND z_dropoff.zone IS NOT NULL
 GROUP BY r.pickup_location_id, r.dropoff_location_id,
@@ -189,7 +176,7 @@ LEFT JOIN zones z_pickup ON r.pickup_location_id = z_pickup.location_id
 LEFT JOIN zones z_dropoff ON r.dropoff_location_id = z_dropoff.location_id
 WHERE r.total_amount > 0
 AND r.dropoff_datetime > r.pickup_datetime
-AND r.pickup_datetime >= CURRENT_DATE - INTERVAL '30 days'
+AND r.pickup_datetime >= (SELECT MAX(pickup_datetime) FROM rides) - INTERVAL '30 days'
 AND z_pickup.zone IS NOT NULL
 AND z_dropoff.zone IS NOT NULL
 GROUP BY r.pickup_location_id, r.dropoff_location_id,

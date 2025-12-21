@@ -8,7 +8,7 @@
 - ✅ Metabase running on <http://localhost:3000>
 - ✅ PostgreSQL connection successful
 - ✅ Database synced (3 tables + 9 materialized views)
-- ✅ 93,171 rides loaded and validated
+- ✅ 17,417,027 rides loaded and validated
 - ✅ Automated materialized view refresh configured (cron job)
 - ✅ Dashboard SQL queries documented (ready for creation)
 - ✅ All 4 dashboard specifications complete

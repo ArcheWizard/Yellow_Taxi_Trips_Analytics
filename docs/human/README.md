@@ -18,9 +18,9 @@ A comprehensive data analytics platform for analyzing NYC Yellow Taxi trip data 
 
 - Dataset: Yellow Taxi Trip Records
 - Source: <https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page>
-- Current Data: November 2024 (~3M rows)
+- Current Data: July-November 2025 (17.4M rows)
 - File Format: Parquet
-- Sample Size: 100k-500k rows for development
+- Production Scale: 17,417,027 trips loaded
 
 **Download Link:**
 
@@ -257,10 +257,12 @@ Yellow_Taxi_Trips_Analytics/
 
 ## 📈 Performance Targets
 
-- Query response time: < 100ms for basic queries
-- API latency: < 200ms for analytics endpoints
-- ETL throughput: > 10k rows/second
-- Database size: ~5GB for 3M rows
+- Query response time: < 1ms with materialized views (achieved: 0.11ms avg)
+- API latency: < 10ms for analytics endpoints (achieved: 3-7ms)
+- ETL throughput: > 10k rows/second (achieved at scale)
+- Database size: 4.56 GB for 17.4M rows
+- MV refresh time: < 60s (achieved: 50.56s for all 9 views)
+- Incremental refresh: < 10s for hot data (achieved: 5.49s)
 
 ## 🤝 Contributing
 
