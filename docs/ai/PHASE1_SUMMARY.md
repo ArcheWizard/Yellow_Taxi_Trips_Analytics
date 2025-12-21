@@ -678,18 +678,18 @@ python scripts/verify_setup.py
    - Lookup value tables
 
 4. **`PROGRESS.md`** (350 lines)
-    - Detailed progress tracking
-    - Completed tasks with timestamps
-    - Next steps and roadmap
-    - Technical decisions log
+   - Detailed progress tracking
+   - Completed tasks with timestamps
+   - Next steps and roadmap
+   - Technical decisions log
 
 #### Root Documentation
 
 1. **`docs/INDEX.md`** (100 lines)
-    - Documentation hub
-    - Navigation guide
-    - Quick links by task
-    - File organization
+   - Documentation hub
+   - Navigation guide
+   - Quick links by task
+   - File organization
 
 **Documentation Statistics:**
 

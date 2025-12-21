@@ -212,6 +212,7 @@ NYC Taxi & Limousine Commission (TLC) - Yellow Taxi Trip Records
 - [x] **Comprehensive Benchmarking** - Validated performance at production scale
 
 **Achieved Outcomes:**
+
 - 2.8x faster incremental refresh at 17.4M rows (5.49s hot vs 15.36s full)
 - Sub-linear scaling validated (78x refresh time for 187x data = 58% efficiency)
 - 13,822x query speedup with materialized views (0.11ms vs 1,474ms raw)
@@ -315,8 +316,7 @@ List of available analytics endpoints:
 
 Distance segments analysis showing fare distribution by trip distance:
 
-![Distance Segments Bar Graph](docs/screenshots/Mv_Distance_Segments_Bar_Graph.png
-)
+![Distance Segments Bar Graph](docs/screenshots/Mv_Distance_Segments_Bar_Graph.png)
 
 Popular routes table showing the most frequent pickup-dropoff pairs:
 

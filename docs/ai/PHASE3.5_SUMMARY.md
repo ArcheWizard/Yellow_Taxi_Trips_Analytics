@@ -14,22 +14,22 @@ Optimize API performance for production readiness by implementing connection poo
 
 ### Single Request Performance
 
-| Endpoint | Before | After | Improvement |
-|----------|--------|-------|-------------|
+| Endpoint                    | Before   | After   | Improvement    |
+| --------------------------- | -------- | ------- | -------------- |
 | `/api/v1/analytics/summary` | **90ms** | **5ms** | **18x faster** |
-| `/api/v1/analytics/hourly` | 19ms | 2.5ms | 7.6x faster |
+| `/api/v1/analytics/hourly`  | 19ms     | 2.5ms   | 7.6x faster    |
 
 ### Load Test Performance (1000 requests, 10 concurrent users)
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| **Mean Response Time** | **374ms** | **7ms** | **53x faster** |
-| **Requests/Second** | 26.67 | 1,353.21 | **51x more throughput** |
-| **P50 (Median)** | 373ms | 7ms | 53x faster |
-| **P95** | 408ms | 10ms | 41x faster |
-| **P99** | 431ms | 12ms | 36x faster |
-| **Max Response Time** | 511ms | 15ms | 34x faster |
-| **Failed Requests** | 0 | 0 | ✅ 100% reliability |
+| Metric                 | Before    | After    | Improvement             |
+| ---------------------- | --------- | -------- | ----------------------- |
+| **Mean Response Time** | **374ms** | **7ms**  | **53x faster**          |
+| **Requests/Second**    | 26.67     | 1,353.21 | **51x more throughput** |
+| **P50 (Median)**       | 373ms     | 7ms      | 53x faster              |
+| **P95**                | 408ms     | 10ms     | 41x faster              |
+| **P99**                | 431ms     | 12ms     | 36x faster              |
+| **Max Response Time**  | 511ms     | 15ms     | 34x faster              |
+| **Failed Requests**    | 0         | 0        | ✅ 100% reliability     |
 
 ---
 
@@ -127,19 +127,19 @@ WHERE total_amount > 0 AND dropoff_datetime > pickup_datetime;
 
 ### Connection Pooling Impact
 
-| Metric | Without Pooling | With Pooling | Explanation |
-|--------|----------------|--------------|-------------|
-| Connection overhead | 50-100ms | ~0ms | Reuses existing connections |
-| Under 10 concurrent users | 374ms mean | 7ms mean | No connection creation bottleneck |
-| Throughput | 26 req/s | 1,353 req/s | Can handle 51x more traffic |
+| Metric                    | Without Pooling | With Pooling | Explanation                       |
+| ------------------------- | --------------- | ------------ | --------------------------------- |
+| Connection overhead       | 50-100ms        | ~0ms         | Reuses existing connections       |
+| Under 10 concurrent users | 374ms mean      | 7ms mean     | No connection creation bottleneck |
+| Throughput                | 26 req/s        | 1,353 req/s  | Can handle 51x more traffic       |
 
 ### Materialized View Impact
 
-| Scenario | Query Type | Response Time |
-|----------|-----------|---------------|
-| No filters | Materialized view | **1-5ms** |
-| With date filters | Direct table query | 50-90ms |
-| Complex aggregations | Materialized views | 2-10ms |
+| Scenario             | Query Type         | Response Time |
+| -------------------- | ------------------ | ------------- |
+| No filters           | Materialized view  | **1-5ms**     |
+| With date filters    | Direct table query | 50-90ms       |
+| Complex aggregations | Materialized views | 2-10ms        |
 
 ---
 
@@ -148,20 +148,20 @@ WHERE total_amount > 0 AND dropoff_datetime > pickup_datetime;
 ### Current Performance (93K rows)
 
 | Concurrent Users | Mean Response Time | Throughput (req/s) |
-|------------------|-------------------|-------------------|
-| 1 | 5ms | N/A |
-| 10 | 7ms | 1,353 |
-| 50 | ~15ms (estimated) | ~3,333 |
-| 100 | ~30ms (estimated) | ~3,333 |
+| ---------------- | ------------------ | ------------------ |
+| 1                | 5ms                | N/A                |
+| 10               | 7ms                | 1,353              |
+| 50               | ~15ms (estimated)  | ~3,333             |
+| 100              | ~30ms (estimated)  | ~3,333             |
 
 ### Expected Performance at Scale
 
-| Dataset Size | Materialized View Refresh | Query Time | Notes |
-|--------------|--------------------------|------------|-------|
-| 93K rows | ~1 second | 1-5ms | ✅ Current |
-| 1M rows | ~10 seconds | 1-5ms | Projected |
-| 10M rows | ~2 minutes | 1-5ms | Partitioning recommended |
-| 100M rows | ~20 minutes | 1-5ms | TimescaleDB/partitioning required |
+| Dataset Size | Materialized View Refresh | Query Time | Notes                             |
+| ------------ | ------------------------- | ---------- | --------------------------------- |
+| 93K rows     | ~1 second                 | 1-5ms      | ✅ Current                        |
+| 1M rows      | ~10 seconds               | 1-5ms      | Projected                         |
+| 10M rows     | ~2 minutes                | 1-5ms      | Partitioning recommended          |
+| 100M rows    | ~20 minutes               | 1-5ms      | TimescaleDB/partitioning required |
 
 **Key Insight:** Query performance stays constant (1-5ms) regardless of table size because materialized views are pre-aggregated!
 
@@ -218,13 +218,13 @@ scripts/refresh_materialized_views.sh
 curl -w "\nTime: %{time_total}s\n" http://localhost:8000/api/v1/analytics/summary
 ```
 
-2. **Load Test:**
+1. **Load Test:**
 
 ```bash
 ab -n 1000 -c 10 http://localhost:8000/api/v1/analytics/summary
 ```
 
-3. **Metrics:**
+1. **Metrics:**
 
 ```bash
 curl http://localhost:8000/metrics | jq
@@ -339,11 +339,11 @@ Phase 4.5 successfully transformed the API from a proof-of-concept to a producti
 
 ## 📋 Phase Summary
 
-| Aspect | Details |
-|--------|---------|
-| **Duration** | 1 day (November 12, 2025) |
-| **Lines of Code** | ~300 lines modified, 1 new view, 1 new endpoint |
-| **Files Modified** | 5 core files |
-| **Performance Gain** | 53x faster under load |
-| **Status** | ✅ Completed |
-| **Next Phase** | Continue Phase 4 (Metabase dashboards) |
+| Aspect               | Details                                         |
+| -------------------- | ----------------------------------------------- |
+| **Duration**         | 1 day (November 12, 2025)                       |
+| **Lines of Code**    | ~300 lines modified, 1 new view, 1 new endpoint |
+| **Files Modified**   | 5 core files                                    |
+| **Performance Gain** | 53x faster under load                           |
+| **Status**           | ✅ Completed                                    |
+| **Next Phase**       | Continue Phase 4 (Metabase dashboards)          |

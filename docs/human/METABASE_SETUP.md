@@ -121,13 +121,13 @@ docker rm metabase
 
 ### Restart from Scratch
 
-```bash
+````bash
 docker stop metabase
 docker rm metabase
 ```bash
 docker run -d -p 3000:3000 --name metabase \
   --add-host=host.docker.internal:host-gateway metabase/metabase
-```
+````
 
 ## 💾 Data Persistence
 

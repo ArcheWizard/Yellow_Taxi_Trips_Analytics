@@ -62,7 +62,7 @@ Navigate to the `ai/` folder for AI-optimized context:
 ### "I want to write SQL queries"
 
 → Check [human/ANALYTICS.md](human/ANALYTICS.md) and
-  [ai/SCHEMA_REFERENCE.md](ai/SCHEMA_REFERENCE.md)
+[ai/SCHEMA_REFERENCE.md](ai/SCHEMA_REFERENCE.md)
 
 ### "I want to understand the database"
 
@@ -75,7 +75,7 @@ Navigate to the `ai/` folder for AI-optimized context:
 ### "I want to create dashboards"
 
 → See [human/METABASE_SETUP.md](human/METABASE_SETUP.md) and
-  [ai/PHASE4_SUMMARY.md](ai/PHASE4_SUMMARY.md)
+[ai/PHASE4_SUMMARY.md](ai/PHASE4_SUMMARY.md)
 
 ### "I want to plan for scaling to millions of rows"
 

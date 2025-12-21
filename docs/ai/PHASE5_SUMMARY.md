@@ -136,14 +136,14 @@ Evaluate if columnar storage (Parquet + DuckDB) handles analytical workloads bet
 
 ### Results
 
-| Query | PostgreSQL MVs | DuckDB Parquet | Winner |
-|-------|---------------|----------------|--------|
-| Hourly Stats | 0.77ms | 8.85ms | **PG 11.6x faster** |
-| Top Pickup | 0.36ms | 10.04ms | **PG 27.5x faster** |
-| Popular Routes | 0.42ms | 14.38ms | **PG 34.5x faster** |
-| Analytics Summary | 0.21ms | 1.80ms | **PG 8.8x faster** |
-| Time Patterns | 0.38ms | 3.71ms | **PG 9.9x faster** |
-| **Average** | **0.43ms** | **7.76ms** | **PG 18.2x faster** |
+| Query             | PostgreSQL MVs | DuckDB Parquet | Winner              |
+| ----------------- | -------------- | -------------- | ------------------- |
+| Hourly Stats      | 0.77ms         | 8.85ms         | **PG 11.6x faster** |
+| Top Pickup        | 0.36ms         | 10.04ms        | **PG 27.5x faster** |
+| Popular Routes    | 0.42ms         | 14.38ms        | **PG 34.5x faster** |
+| Analytics Summary | 0.21ms         | 1.80ms         | **PG 8.8x faster**  |
+| Time Patterns     | 0.38ms         | 3.71ms         | **PG 9.9x faster**  |
+| **Average**       | **0.43ms**     | **7.76ms**     | **PG 18.2x faster** |
 
 ### Storage Comparison
 
@@ -174,11 +174,11 @@ Modified 3 API endpoints to use incremental views for 38.8x faster refresh:
 
 **File:** `src/api/services/database.py`
 
-| Method | Old View | New View | Benefit |
-|--------|----------|----------|---------|
-| `get_hourly_stats()` | `mv_hourly_stats` | `mv_hourly_stats_incremental` | 38.8x faster refresh |
+| Method                       | Old View                  | New View                              | Benefit              |
+| ---------------------------- | ------------------------- | ------------------------------------- | -------------------- |
+| `get_hourly_stats()`         | `mv_hourly_stats`         | `mv_hourly_stats_incremental`         | 38.8x faster refresh |
 | `get_top_pickup_locations()` | `mv_top_pickup_locations` | `mv_top_pickup_locations_incremental` | 38.8x faster refresh |
-| `get_popular_routes()` | `mv_popular_routes` | `mv_popular_routes_incremental` | 38.8x faster refresh |
+| `get_popular_routes()`       | `mv_popular_routes`       | `mv_popular_routes_incremental`       | 38.8x faster refresh |
 
 ### API Endpoints Affected
 
@@ -311,14 +311,14 @@ Hot window: Last 30 days from 2025-09-02
 
 ### Scaling Analysis
 
-| Metric | 93K rows | 3M rows | 17.4M rows | Growth Factor |
-|--------|----------|---------|------------|---------------|
-| Data Size | 26 MB | ~840 MB | 4,564 MB | **176x** |
-| Row Count | 93,171 | 3,001,142 | 17,417,027 | **187x** |
-| Full MV Refresh | 0.65s | 9.2s | 50.56s | **78x** |
-| Query Time (MV) | 0.43ms | 0.11ms | 0.11ms | **Same** |
-| Hot Refresh | 0.008s | 0.95s | 5.49s | **686x** |
-| Hot Data % | 0% | 5% | 5% | **Stable** |
+| Metric          | 93K rows | 3M rows   | 17.4M rows | Growth Factor |
+| --------------- | -------- | --------- | ---------- | ------------- |
+| Data Size       | 26 MB    | ~840 MB   | 4,564 MB   | **176x**      |
+| Row Count       | 93,171   | 3,001,142 | 17,417,027 | **187x**      |
+| Full MV Refresh | 0.65s    | 9.2s      | 50.56s     | **78x**       |
+| Query Time (MV) | 0.43ms   | 0.11ms    | 0.11ms     | **Same**      |
+| Hot Refresh     | 0.008s   | 0.95s     | 5.49s      | **686x**      |
+| Hot Data %      | 0%       | 5%        | 5%         | **Stable**    |
 
 **Key Finding: Sub-Linear Scaling Validated**
 
@@ -356,12 +356,12 @@ bash scripts/refresh_incremental_views.sh
 
 ### Performance Comparison
 
-| Aspect | Original Script | Incremental Script | Winner |
-|--------|-----------------|-------------------|--------|
-| Total Time | 650ms (9 views) | 953ms (all views) | Original (but...) |
-| Hot Refresh | N/A | 48ms (3 views) | **Incremental** |
-| Flexibility | Full refresh only | Hot/cold separation | **Incremental** |
-| Scalability | Linear with data | Sub-linear (hot only) | **Incremental** |
+| Aspect      | Original Script   | Incremental Script    | Winner            |
+| ----------- | ----------------- | --------------------- | ----------------- |
+| Total Time  | 650ms (9 views)   | 953ms (all views)     | Original (but...) |
+| Hot Refresh | N/A               | 48ms (3 views)        | **Incremental**   |
+| Flexibility | Full refresh only | Hot/cold separation   | **Incremental**   |
+| Scalability | Linear with data  | Sub-linear (hot only) | **Incremental**   |
 
 **Why incremental is better despite being slower?**
 
@@ -494,19 +494,19 @@ At 17.4M rows:
 
 ## 📈 Performance Metrics at a Glance
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| Dataset Size | 93,171 rows | 17.4M rows | **187x larger** |
-| Database Size | ~50 MB | 4,564 MB | **91x larger** |
-| Query Speed | 44.80ms (raw) | 0.11ms (MV) | **13,822x faster** |
-| Full Refresh | 0.65s | 50.56s | **78x slower** (sub-linear!) |
-| Hot Refresh | N/A | 5.49s | **2.8x faster than full** |
-| Hot Data % | 0% | 5% (874K rows) | **Validated** |
-| Cold Data % | 100% | 95% (16.5M rows) | **Stable** |
-| Storage (Views) | 1.48 MB | 7.47 MB | **5x larger** |
-| API Response | 3-5ms | 3-5ms | **No change** |
-| Concurrent Refresh | ❌ Failed (11%) | ✅ Works (100%) | **Fixed** |
-| Scaling Efficiency | N/A | 58% | **Sub-linear validated** |
+| Metric             | Before          | After            | Improvement                  |
+| ------------------ | --------------- | ---------------- | ---------------------------- |
+| Dataset Size       | 93,171 rows     | 17.4M rows       | **187x larger**              |
+| Database Size      | ~50 MB          | 4,564 MB         | **91x larger**               |
+| Query Speed        | 44.80ms (raw)   | 0.11ms (MV)      | **13,822x faster**           |
+| Full Refresh       | 0.65s           | 50.56s           | **78x slower** (sub-linear!) |
+| Hot Refresh        | N/A             | 5.49s            | **2.8x faster than full**    |
+| Hot Data %         | 0%              | 5% (874K rows)   | **Validated**                |
+| Cold Data %        | 100%            | 95% (16.5M rows) | **Stable**                   |
+| Storage (Views)    | 1.48 MB         | 7.47 MB          | **5x larger**                |
+| API Response       | 3-5ms           | 3-5ms            | **No change**                |
+| Concurrent Refresh | ❌ Failed (11%) | ✅ Works (100%)  | **Fixed**                    |
+| Scaling Efficiency | N/A             | 58%              | **Sub-linear validated**     |
 
 ---
 
@@ -582,6 +582,7 @@ At 17.4M rows:
 9. ✅ **Full data load** - Loaded 17.4M rows, tested production-scale performance
 
 **LinkedIn Post Ready:**
+
 > "Scaled NYC taxi analytics to 17.4M trips with incremental materialized views: 13,822x faster queries (0.11ms), 2.8x faster refresh, 58% scaling efficiency. PostgreSQL MVs outperformed DuckDB, sub-linear growth validated. Production-ready at scale! 🚀 #DataEngineering #PostgreSQL #Performance"
 
 ---
