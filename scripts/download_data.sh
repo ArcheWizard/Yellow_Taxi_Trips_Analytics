@@ -12,9 +12,9 @@ echo ""
 # Create data directory if it doesn't exist
 mkdir -p "$DATA_DIR"
 
-# Download 2025 data (July, August, October, November)
+# Download 2025 data (July, August, September, October, November)
 # Each month has approximately 3M rows
-MONTHS=("2025-07" "2025-08" "2025-10" "2025-11")
+MONTHS=("2025-07" "2025-08" "2025-09" "2025-10" "2025-11")
 
 for month in "${MONTHS[@]}"; do
     filename="yellow_tripdata_${month}.parquet"

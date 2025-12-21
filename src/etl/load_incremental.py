@@ -16,8 +16,6 @@ sys.path.insert(0, str(project_root))
 from config.database import DatabaseConfig
 from src.analytics.benchmark_incremental_refresh import (
     benchmark_full_refresh, benchmark_incremental_refresh, get_data_stats)
-from src.analytics.benchmark_materialized_views import \
-    MaterializedViewBenchmark
 from src.etl.load_data import TaxiDataLoader
 
 
@@ -117,30 +115,6 @@ class IncrementalLoader:
         print(f"BENCHMARKING AT {self.current_rows:,} ROWS")
         print(f"{'=' * 70}\n")
 
-        # 1. Materialized view benchmarks
-        print("Phase 1: Materialized View Performance...")
-        mv_benchmark = MaterializedViewBenchmark()
-        mv_results = mv_benchmark.benchmark_all_views(concurrent=True)
-        query_results = mv_benchmark.benchmark_query_performance()
-        raw_query_results = mv_benchmark.benchmark_raw_table_queries()
-
-        # Combine results
-        results = {
-            **mv_results,
-            "query_performance": query_results,
-            "raw_query_performance": raw_query_results,
-        }
-
-        # Save results
-        filename = f"benchmark_{milestone // 1000}K_rows_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-        filepath = mv_benchmark.save_results(results, filename)
-
-        # Generate summary
-        mv_benchmark.generate_summary_report(results)
-
-        # 2. Incremental refresh benchmarks
-        print("\nPhase 2: Incremental Refresh Performance...")
-
         # Get data distribution
         stats = get_data_stats(self.db)
         print("\nData Distribution:")
@@ -149,6 +123,7 @@ class IncrementalLoader:
         print(f"  Cold: {stats['cold_rows']:,} rows ({100 - stats['hot_pct']:.1f}%)")
 
         # Benchmark refresh strategies
+        print("\nRefresh Performance:")
         full_time = benchmark_full_refresh(self.db)
         hot_time = benchmark_incremental_refresh(self.db)
 
@@ -162,19 +137,29 @@ class IncrementalLoader:
         print(f"Speedup:         {speedup:.1f}x faster")
         print(f"{'=' * 70}\n")
 
-        return {
+        # Save results
+        results = {
             "milestone": milestone,
             "row_count": self.current_rows,
-            "mv_refresh_time": mv_results["total_refresh_time"],
+            "timestamp": datetime.now().isoformat(),
+            "data_stats": stats,
             "full_refresh_time": full_time,
             "hot_refresh_time": hot_time,
             "speedup_factor": speedup,
-            "query_avg_ms": sum(q["duration_ms"] for q in query_results)
-            / len(query_results),
-            "raw_query_avg_ms": sum(q["duration_ms"] for q in raw_query_results)
-            / len(raw_query_results),
-            "benchmark_file": str(filepath),
         }
+
+        # Save to logs directory
+        logs_dir = Path("logs")
+        logs_dir.mkdir(exist_ok=True)
+        filename = f"benchmark_{milestone // 1000}K_rows_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        filepath = logs_dir / filename
+
+        with open(filepath, "w") as f:
+            json.dump(results, f, indent=2)
+
+        print(f"✓ Benchmark results saved to: {filepath}\n")
+
+        return results
 
     def refresh_materialized_views(self):
         """Refresh all materialized views after loading."""
